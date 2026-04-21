@@ -74,7 +74,7 @@ if ($ConfigurePortProxy) {
 
     netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=80 | Out-Null
     netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=80 connectaddress=$wslIp connectport=80 | Out-Null
-    Write-Result -Label "Port Proxy" -Status "PASS" -Details "Configured 0.0.0.0:80 -> $wslIp:80"
+    Write-Result -Label "Port Proxy" -Status "PASS" -Details "Configured 0.0.0.0:80 -> ${wslIp}:80"
 } else {
     Write-Result -Label "Port Proxy" -Status "INFO" -Details "Skipped configure step. Use -ConfigurePortProxy in admin shell if needed."
 }

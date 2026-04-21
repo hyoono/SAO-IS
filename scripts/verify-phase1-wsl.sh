@@ -4,6 +4,30 @@ set -u
 
 echo "=== SAO-IS Phase 1 WSL Verification ==="
 
+check_php_fpm_access_hint() {
+  local home_gid home_mode worker_pid worker_groups
+
+  home_mode=$(stat -c "%a" /home/joshu 2>/dev/null || echo "")
+  home_gid=$(id -g joshu 2>/dev/null || echo "")
+  worker_pid=$(pgrep -f "php-fpm: pool www" | head -n 1 || true)
+
+  if [ -z "$worker_pid" ] || [ -z "$home_gid" ] || [ -z "$home_mode" ]; then
+    return
+  fi
+
+  worker_groups=$(awk '/^Groups:/ {for (i=2;i<=NF;i++) print $i}' "/proc/$worker_pid/status" 2>/dev/null || true)
+
+  # If /home/joshu is not world-executable and php-fpm worker does not include joshu group,
+  # PHP cannot traverse the path and nginx/php-fpm may report "Primary script unknown".
+  if [ "$home_mode" != "755" ] && [ "$home_mode" != "775" ] && [ "$home_mode" != "777" ]; then
+    if ! echo "$worker_groups" | grep -qx "$home_gid"; then
+      echo "[WARN] php-fpm worker group mismatch detected for /home/joshu access"
+      echo "       Suggested fix: run 'sudo service php8.2-fpm restart' and re-run this check"
+      echo "       If still failing, use: chmod 755 /home/joshu or ensure www-data has joshu group access"
+    fi
+  fi
+}
+
 check_service() {
   local svc="$1"
 
@@ -64,6 +88,7 @@ check_api_health() {
 check_service "nginx"
 check_service "php8.2-fpm"
 check_service "mysql"
+check_php_fpm_access_hint
 
 check_http "Root URL" "http://127.0.0.1"
 check_api_health

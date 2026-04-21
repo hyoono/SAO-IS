@@ -188,3 +188,37 @@ curl -i http://127.0.0.1/api/v1/health
 Expected after fix:
 - `HTTP/1.1 200 OK`
 - JSON payload includes `status: ok`.
+
+### Nginx error says "Primary script unknown"
+
+Symptom:
+- `/api/v1/health` returns `404` with body `File not found.`
+- Nginx error log includes `FastCGI sent in stderr: "Primary script unknown"`.
+
+Likely cause:
+- `www-data` was added to `joshu` group, but `php8.2-fpm` workers were not restarted, so workers still run without supplementary group access.
+
+Fix:
+
+```bash
+id www-data
+ps -eo pid,user,group,comm,args | grep -E 'php-fpm8.2|php-fpm: pool' | grep -v grep
+
+sudo service php8.2-fpm restart
+
+# Verify worker group list now includes gid of joshu (usually 1000)
+for p in $(pgrep -f "php-fpm: pool www" | head -n 2); do
+  echo "PID $p"
+  grep '^Groups:' /proc/$p/status
+done
+
+curl -i http://127.0.0.1/api/v1/health
+```
+
+Fallback if restart is not possible immediately:
+
+```bash
+chmod 755 /home/joshu
+```
+
+Then retest `/api/v1/health`.
