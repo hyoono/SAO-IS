@@ -25,6 +25,10 @@ bash /home/joshu/SAO-IS/scripts/verify-phase1-wsl.sh
 powershell -ExecutionPolicy Bypass -File "\\wsl$\Ubuntu-22.04\home\joshu\SAO-IS\scripts\verify-phase1-windows.ps1" -ConfigurePortProxy
 ```
 
+This admin mode now configures both:
+- Port proxy `0.0.0.0:80 -> <WSL-IP>:80`
+- Windows Firewall inbound allow rule for TCP `80`
+
 3. For read-only Windows checks (no proxy changes), omit -ConfigurePortProxy.
 
 ## 1) Confirm Windows Host IP
@@ -52,7 +56,7 @@ sudo service mysql status
 Expected:
 - Each service reports active/running
 
-## 3) Refresh Port Proxy Rule (Windows Admin PowerShell)
+## 3) Refresh Port Proxy Rule and Firewall Rule (Windows Admin PowerShell)
 
 Run in Windows PowerShell as Admin:
 
@@ -66,12 +70,16 @@ $wslIp = (wsl -d Ubuntu-22.04 -e bash -lc "hostname -I | awk '{print $1}'").Trim
 # Add proxy from Windows :80 to WSL :80
 netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=80 connectaddress=$wslIp connectport=80
 
+# Allow inbound LAN traffic to TCP/80
+New-NetFirewallRule -DisplayName "SAO-IS HTTP 80 (WSL PortProxy)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 80 -Profile Private,Public
+
 # Show current rules
 netsh interface portproxy show v4tov4
 ```
 
 Expected:
 - A row exists for 0.0.0.0:80 -> <WSL-IP>:80
+- Firewall rule for TCP/80 exists and is enabled
 
 ## 4) Verify Nginx Response via Windows Host IP
 
@@ -209,6 +217,28 @@ curl -i http://127.0.0.1/api/v1/health
 Expected after fix:
 - `HTTP/1.1 200 OK`
 - JSON payload includes `status: ok` and `timestamp`.
+
+### Other devices time out on http://<windows-host-ip>
+
+Symptom:
+- `Invoke-WebRequest http://<host-ip>` works on the Windows host.
+- Requests from another LAN device time out.
+
+Likely cause:
+- Windows Defender Firewall has no enabled inbound allow rule for TCP/80.
+
+Fix (Windows Admin PowerShell):
+
+```powershell
+New-NetFirewallRule -DisplayName "SAO-IS HTTP 80 (WSL PortProxy)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 80 -Profile Private,Public
+
+# Verify
+Get-NetFirewallRule -DisplayName "SAO-IS HTTP 80 (WSL PortProxy)" | Format-Table Name,Enabled,Profile,Action
+```
+
+If still timing out after adding the rule:
+- Confirm both devices are on the same non-guest Wi-Fi/LAN segment.
+- Check router setting for AP/client isolation and disable it.
 
 ### Nginx error says "Primary script unknown"
 

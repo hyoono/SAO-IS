@@ -11,6 +11,33 @@ function Test-IsAdmin {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Get-Tcp80InboundAllowRules {
+    $matches = foreach ($rule in (Get-NetFirewallRule -Direction Inbound -Enabled True -Action Allow)) {
+        foreach ($portFilter in (Get-NetFirewallPortFilter -AssociatedNetFirewallRule $rule)) {
+            if ($portFilter.Protocol -eq 'TCP' -and $portFilter.LocalPort -eq '80') {
+                [PSCustomObject]@{
+                    Name = $rule.DisplayName
+                    Profile = $rule.Profile
+                }
+            }
+        }
+    }
+
+    return @($matches)
+}
+
+function Ensure-Tcp80InboundAllowRule {
+    $ruleName = 'SAO-IS HTTP 80 (WSL PortProxy)'
+    $existing = Get-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue
+
+    if ($existing) {
+        Set-NetFirewallRule -DisplayName $ruleName -Enabled True -Direction Inbound -Action Allow -Profile Any | Out-Null
+    }
+    else {
+        New-NetFirewallRule -DisplayName $ruleName -Direction Inbound -Action Allow -Protocol TCP -LocalPort 80 -Profile Any | Out-Null
+    }
+}
+
 function Write-Result {
     param(
         [string]$Label,
@@ -75,6 +102,9 @@ if ($ConfigurePortProxy) {
     netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=80 | Out-Null
     netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=80 connectaddress=$wslIp connectport=80 | Out-Null
     Write-Result -Label "Port Proxy" -Status "PASS" -Details "Configured 0.0.0.0:80 -> ${wslIp}:80"
+
+    Ensure-Tcp80InboundAllowRule
+    Write-Result -Label "Firewall TCP 80" -Status "PASS" -Details "Ensured inbound allow rule for TCP/80."
 } else {
     Write-Result -Label "Port Proxy" -Status "INFO" -Details "Skipped configure step. Use -ConfigurePortProxy in admin shell if needed."
 }
@@ -84,6 +114,16 @@ if ($proxyRows -match "0.0.0.0\s+80") {
     Write-Result -Label "Port Proxy Rule Present" -Status "PASS" -Details "Found listener 0.0.0.0:80"
 } else {
     Write-Result -Label "Port Proxy Rule Present" -Status "WARN" -Details "No 0.0.0.0:80 listener found."
+}
+
+if (-not $ConfigurePortProxy) {
+    $tcp80Rules = Get-Tcp80InboundAllowRules
+    if ($tcp80Rules.Count -gt 0) {
+        $ruleNames = ($tcp80Rules | Select-Object -ExpandProperty Name -Unique | Select-Object -First 2) -join '; '
+        Write-Result -Label "Firewall TCP 80" -Status "PASS" -Details ("Enabled rule(s): " + $ruleNames)
+    } else {
+        Write-Result -Label "Firewall TCP 80" -Status "FAIL" -Details "No enabled inbound rule for TCP/80. Other devices may time out. Run admin shell with -ConfigurePortProxy."
+    }
 }
 
 try {
