@@ -155,7 +155,7 @@ server {
   index index.php index.html;
 
   location / {
-    try_files $uri $uri/ /index.html;
+    try_files $uri $uri/ /index.php?$query_string;
   }
 
   location /api {
@@ -188,6 +188,27 @@ curl -i http://127.0.0.1/api/v1/health
 Expected after fix:
 - `HTTP/1.1 200 OK`
 - JSON payload includes `status: ok`.
+
+### API health returns 500 with Sanctum middleware class missing
+
+Symptom:
+- `http://127.0.0.1/api/v1/health` returns `500`.
+- `backend/storage/logs/laravel.log` includes: `Target class [Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful] does not exist`.
+
+Likely cause:
+- `statefulApi` middleware is enabled in Laravel bootstrap, but `laravel/sanctum` dependency is missing.
+
+Fix:
+
+```bash
+cd /home/joshu/SAO-IS/backend
+composer require laravel/sanctum:^4.0 --no-interaction --no-progress
+curl -i http://127.0.0.1/api/v1/health
+```
+
+Expected after fix:
+- `HTTP/1.1 200 OK`
+- JSON payload includes `status: ok` and `timestamp`.
 
 ### Nginx error says "Primary script unknown"
 
