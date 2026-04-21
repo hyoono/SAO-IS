@@ -9,6 +9,7 @@ vendor/
 
 # Uploaded documents (never commit user data)
 storage/app/documents/
+backend/storage/app/documents/
 
 # Laravel compiled/cache
 backend/storage/*.key
