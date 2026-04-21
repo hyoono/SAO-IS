@@ -51,6 +51,8 @@ Scope: Phase 1 (Project scaffolding and environment)
 - backend/database/seeders/DatabaseSeeder.php (RoleSeeder wired)
 - .gitignore (backend storage documents path)
 - scripts/backup.sh (removed hardcoded DB password; improved failure detection)
+- scripts/verify-phase1-wsl.sh (WSL-side verification helper)
+- scripts/verify-phase1-windows.ps1 (Windows/LAN verification helper)
 
 ## Remaining Work To Close Phase 1
 

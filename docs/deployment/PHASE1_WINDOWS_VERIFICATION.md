@@ -9,6 +9,24 @@ Purpose: Verify the remaining Phase 1 acceptance items that require Windows/WSL 
 - WSL distro name assumed: Ubuntu-22.04
 - Repository path assumed in WSL: /home/joshu/SAO-IS
 
+## Quick Scripted Option
+
+Instead of running each command manually, use the helper scripts:
+
+1. In WSL:
+
+```bash
+bash /home/joshu/SAO-IS/scripts/verify-phase1-wsl.sh
+```
+
+2. In Windows PowerShell (Run as Administrator):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "\\wsl$\Ubuntu-22.04\home\joshu\SAO-IS\scripts\verify-phase1-windows.ps1" -ConfigurePortProxy
+```
+
+3. For read-only Windows checks (no proxy changes), omit -ConfigurePortProxy.
+
 ## 1) Confirm Windows Host IP
 
 Run in Windows PowerShell:
