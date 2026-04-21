@@ -132,3 +132,59 @@ Expected:
 ## Deferred Check
 
 - Reboot and auto-start validation is deferred until final deployment stage.
+
+## Troubleshooting
+
+### API health returns 404 but Laravel route exists
+
+Symptom:
+- `http://127.0.0.1/api/v1/health` returns `404 Not Found` from nginx.
+- `php artisan route:list` shows `GET|HEAD api/v1/health` exists.
+
+Likely cause:
+- Active nginx site is still Debian default (`/var/www/html`) with no `/api` pass-through.
+
+Fix (run in WSL with sudo):
+
+```bash
+cat <<'EOF' > /tmp/sao-is-nginx
+server {
+  listen 80;
+  server_name _;
+  root /home/joshu/SAO-IS/backend/public;
+  index index.php index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  location /api {
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  location ~ \.php$ {
+    fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+    include fastcgi_params;
+  }
+
+  location ~ /\.(?!well-known).* {
+    deny all;
+  }
+}
+EOF
+
+sudo cp /tmp/sao-is-nginx /etc/nginx/sites-available/sao-is
+sudo ln -sfn /etc/nginx/sites-available/sao-is /etc/nginx/sites-enabled/sao-is
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo usermod -aG joshu www-data
+sudo chmod 750 /home/joshu
+sudo nginx -t
+sudo service nginx reload
+
+curl -i http://127.0.0.1/api/v1/health
+```
+
+Expected after fix:
+- `HTTP/1.1 200 OK`
+- JSON payload includes `status: ok`.

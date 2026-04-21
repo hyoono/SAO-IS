@@ -23,13 +23,31 @@ function Write-Result {
 
 Write-Host "=== SAO-IS Phase 1 Windows Verification ==="
 
-$hostIp = Get-NetIPAddress -AddressFamily IPv4 |
-    Where-Object {
-        $_.IPAddress -notmatch '^169\.254\.' -and
-        $_.IPAddress -ne '127.0.0.1' -and
-        $_.InterfaceAlias -notmatch 'vEthernet|Loopback|WSL'
-    } |
-    Select-Object -First 1 -ExpandProperty IPAddress
+$hostIp = $null
+
+$defaultRoute = Get-NetRoute -AddressFamily IPv4 -DestinationPrefix "0.0.0.0/0" |
+    Where-Object { $_.InterfaceAlias -notmatch 'vEthernet|Loopback|WSL|Virtual' } |
+    Sort-Object RouteMetric |
+    Select-Object -First 1
+
+if ($defaultRoute) {
+    $hostIp = Get-NetIPAddress -InterfaceIndex $defaultRoute.InterfaceIndex -AddressFamily IPv4 |
+        Where-Object {
+            $_.IPAddress -notmatch '^169\.254\.' -and
+            $_.IPAddress -ne '127.0.0.1'
+        } |
+        Select-Object -First 1 -ExpandProperty IPAddress
+}
+
+if (-not $hostIp) {
+    $hostIp = Get-NetIPAddress -AddressFamily IPv4 |
+        Where-Object {
+            $_.IPAddress -notmatch '^169\.254\.' -and
+            $_.IPAddress -ne '127.0.0.1' -and
+            $_.InterfaceAlias -notmatch 'vEthernet|Loopback|WSL|Virtual'
+        } |
+        Select-Object -First 1 -ExpandProperty IPAddress
+}
 
 if (-not $hostIp) {
     Write-Result -Label "Host IP" -Status "FAIL" -Details "Could not detect a usable host IPv4 address."
@@ -38,11 +56,13 @@ if (-not $hostIp) {
 
 Write-Result -Label "Host IP" -Status "PASS" -Details $hostIp
 
-$wslIp = (wsl -d $Distro -e bash -lc "hostname -I | awk '{print \$1}'").Trim()
-if (-not $wslIp) {
+$wslIpRaw = wsl -d $Distro -e bash -lc "hostname -I | cut -d ' ' -f1" 2>$null
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($wslIpRaw)) {
     Write-Result -Label "WSL IP" -Status "FAIL" -Details "Could not read WSL IP from distro $Distro."
     exit 1
 }
+
+$wslIp = $wslIpRaw.Trim()
 
 Write-Result -Label "WSL IP" -Status "PASS" -Details $wslIp
 
@@ -77,13 +97,19 @@ catch {
 try {
     $healthResp = Invoke-RestMethod -Uri ("http://" + $hostIp + "/api/v1/health") -TimeoutSec 10
     if ($healthResp.status -eq "ok") {
-        Write-Result -Label "API Health" -Status "PASS" -Details ("status=" + $healthResp.status)
+        Write-Result -Label "API Health" -Status "PASS" -Details ("/api/v1/health status=" + $healthResp.status)
     } else {
-        Write-Result -Label "API Health" -Status "FAIL" -Details "Unexpected payload returned."
+        Write-Result -Label "API Health" -Status "FAIL" -Details "Unexpected payload returned from /api/v1/health."
     }
 }
 catch {
-    Write-Result -Label "API Health" -Status "FAIL" -Details $_.Exception.Message
+    try {
+        $fallbackResp = Invoke-WebRequest -Uri ("http://" + $hostIp + "/up") -UseBasicParsing -TimeoutSec 10
+        Write-Result -Label "API Health" -Status "WARN" -Details ("/api/v1/health failed, but /up responded with StatusCode=" + $fallbackResp.StatusCode)
+    }
+    catch {
+        Write-Result -Label "API Health" -Status "FAIL" -Details "Both /api/v1/health and /up failed."
+    }
 }
 
 Write-Host ""

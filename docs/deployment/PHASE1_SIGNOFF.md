@@ -20,7 +20,7 @@ Scope: Phase 1 (Project scaffolding and environment)
 | Database seeders include RoleSeeder and AdminUserSeeder | PASS (Agent) | RoleSeeder added and wired into DatabaseSeeder |
 | .gitignore excludes .env, node_modules/, vendor/, storage/app/documents/ | PASS (Agent) | Verified entries present, including backend storage path |
 | Root README has local setup instructions | PASS (Agent) | README.md includes backend/frontend setup |
-| WSL2 Ubuntu + Nginx + PHP-FPM + MySQL active | NEEDS HUMAN EVIDENCE | Must be checked on target Windows host |
+| WSL2 Ubuntu + Nginx + PHP-FPM + MySQL active | PASS (Human Evidence) | Operator output confirms all 3 services active |
 | Static IP and Windows port proxy configured | NEEDS HUMAN EVIDENCE | Must be checked on target Windows host |
 | Startup script in Windows Startup folder verified | DEFERRED | Deferred to end per operator instruction |
 
@@ -45,6 +45,14 @@ Scope: Phase 1 (Project scaffolding and environment)
 - frontend: npm run build
 - frontend: timeout 15s npm run dev
 
+## Latest Human-Provided Evidence (2026-04-21)
+
+- WSL helper script confirms nginx, php8.2-fpm, and mysql are active.
+- WSL helper script confirms root URL is reachable at http://127.0.0.1.
+- API health probe returned 404 through nginx at http://127.0.0.1/api/v1/health.
+- Laravel route list confirms api/v1/health exists; current blocker is nginx default site routing.
+- Initial Windows helper run failed on WSL IP parsing; helper script has been patched.
+
 ## Artifacts Added for Phase 1 Compliance
 
 - backend/database/seeders/RoleSeeder.php
@@ -57,5 +65,6 @@ Scope: Phase 1 (Project scaffolding and environment)
 ## Remaining Work To Close Phase 1
 
 1. Run Windows-side verification commands from PHASE1_WINDOWS_VERIFICATION.md.
-2. Capture evidence for Nginx over server IP and LAN reachability.
-3. Perform deferred reboot/auto-start validation at the end.
+2. Apply nginx site routing fix from PHASE1_WINDOWS_VERIFICATION.md troubleshooting, then retest /api/v1/health.
+3. Capture evidence for Nginx over server IP and LAN reachability.
+4. Perform deferred reboot/auto-start validation at the end.
