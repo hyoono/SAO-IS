@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,4 +36,8 @@ Route::prefix('auth')->middleware('web')->group(function () {
     Route::get('/ms365/callback', function () {
         return response()->json(['message' => 'MS365 SSO not configured'], 501);
     });
+});
+
+Route::middleware(['web', 'auth:sanctum'])->group(function () {
+    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 });

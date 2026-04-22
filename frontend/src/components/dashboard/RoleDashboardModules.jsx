@@ -1,3 +1,5 @@
+import { useDashboardSummary } from '../../hooks/useDashboard'
+
 const ROLE_MODULES = {
   admin: {
     header: 'System Control Center',
@@ -107,11 +109,20 @@ function ModuleCard({ title, detail }) {
 }
 
 export default function RoleDashboardModules({ role }) {
+  const { data, isLoading, isError } = useDashboardSummary()
   const moduleConfig = ROLE_MODULES[role]
 
   if (!moduleConfig) {
     return null
   }
+
+  const apiModules = data?.modules
+  const cards = Array.isArray(apiModules) && apiModules.length > 0
+    ? apiModules.map((entry) => ({
+      title: entry.title,
+      detail: `${entry.detail} Current value: ${entry.value}.`,
+    }))
+    : moduleConfig.cards
 
   return (
     <section className="mt-8 rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">
@@ -119,8 +130,16 @@ export default function RoleDashboardModules({ role }) {
       <h2 className="mt-2 text-xl font-semibold text-white">{moduleConfig.header}</h2>
       <p className="mt-1 text-sm text-blue-100/80">{moduleConfig.description}</p>
 
+      {isLoading && (
+        <p className="mt-4 text-sm text-blue-200/80">Loading live dashboard metrics...</p>
+      )}
+
+      {isError && (
+        <p className="mt-4 text-sm text-amber-200/90">Live metrics unavailable. Showing static role modules.</p>
+      )}
+
       <div className="mt-5 grid gap-4 md:grid-cols-3">
-        {moduleConfig.cards.map((card) => (
+        {cards.map((card) => (
           <ModuleCard key={card.title} title={card.title} detail={card.detail} />
         ))}
       </div>
