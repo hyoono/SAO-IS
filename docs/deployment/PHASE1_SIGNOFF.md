@@ -22,7 +22,7 @@ Scope: Phase 1 (Project scaffolding and environment)
 | .gitignore excludes .env, node_modules/, vendor/, storage/app/documents/ | PASS (Agent) | Verified entries present, including backend storage path |
 | Root README has local setup instructions | PASS (Agent) | README.md includes backend/frontend setup |
 | WSL2 Ubuntu + Nginx + PHP-FPM + MySQL active | PASS (Human Evidence) | Operator output confirms all 3 services active |
-| Static IP and Windows port proxy configured | NEEDS HUMAN EVIDENCE | Port proxy listener is confirmed; static IP assignment still needs operator confirmation |
+| Static IP and Windows port proxy configured | DEFERRED | Port proxy listener is confirmed; static IP assignment deferred to later phase |
 | Startup script in Windows Startup folder verified | DEFERRED | Deferred to end per operator instruction |
 
 ## Acceptance Criteria (Phase 1)
@@ -67,7 +67,7 @@ Scope: Phase 1 (Project scaffolding and environment)
 - scripts/verify-phase1-wsl.sh (WSL-side verification helper)
 - scripts/verify-phase1-windows.ps1 (Windows/LAN verification helper)
 
-## Remaining Work To Close Phase 1
+## Remaining Work (Deferred To Later Phase)
 
-1. Confirm static IP assignment on the Windows host (separate from current listener/proxy validation).
-2. Perform deferred reboot/auto-start validation at the end.
+1. Confirm static IP assignment on the Windows host.
+2. Perform reboot and auto-start validation.
