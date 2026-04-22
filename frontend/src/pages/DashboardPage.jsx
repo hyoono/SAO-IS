@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import RoleDashboardModules from '../components/dashboard/RoleDashboardModules'
 
 const ROLE_TITLES = {
   admin: 'Admin Dashboard',
@@ -8,14 +9,6 @@ const ROLE_TITLES = {
   org_officer: 'Organization Officer Dashboard',
   student: 'Student Dashboard',
   faculty: 'Faculty Dashboard',
-}
-
-const ROLE_ACTIONS = {
-  admin: ['Manage users', 'Configure workflows', 'Review audit logs'],
-  staff: ['Review submissions', 'Process approvals', 'Monitor notifications'],
-  org_officer: ['Upload accreditation docs', 'Track organization requests', 'View approval status'],
-  student: ['Submit clearance documents', 'Monitor request progress', 'Update profile details'],
-  faculty: ['Endorse assigned documents', 'Check pending endorsements', 'Review workflow history'],
 }
 
 export default function DashboardPage() {
@@ -88,16 +81,9 @@ export default function DashboardPage() {
               <p className="text-xs text-slate-400 uppercase tracking-wide">Email</p>
               <p className="text-lg mt-1 break-all">{user?.email || 'N/A'}</p>
             </div>
-
-            <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4 sm:col-span-2">
-              <p className="text-xs text-slate-400 uppercase tracking-wide">Role Quick Actions</p>
-              <ul className="mt-2 text-sm text-slate-200 space-y-1">
-                {(ROLE_ACTIONS[actualRole] || ['No role actions configured yet.']).map((action) => (
-                  <li key={action}>- {action}</li>
-                ))}
-              </ul>
-            </div>
           </div>
+
+          <RoleDashboardModules role={actualRole} />
         </div>
       </div>
     </div>
