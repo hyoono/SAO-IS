@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import * as authApi from '../../api/auth'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [ms365Loading, setMs365Loading] = useState(false)
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -31,6 +33,21 @@ export default function LoginPage() {
       setError(message)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleMs365 = async () => {
+    setError('')
+    setMs365Loading(true)
+
+    try {
+      await authApi.ms365Redirect()
+      setError('Microsoft 365 SSO redirect configured.')
+    } catch (err) {
+      const message = err?.response?.data?.message || 'Microsoft 365 SSO not yet configured'
+      setError(message)
+    } finally {
+      setMs365Loading(false)
     }
   }
 
@@ -115,8 +132,9 @@ export default function LoginPage() {
           <button
             id="ms365-login"
             type="button"
+            disabled={ms365Loading}
             className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer"
-            onClick={() => setError('Microsoft 365 SSO not yet configured')}
+            onClick={handleMs365}
           >
             <svg className="w-5 h-5" viewBox="0 0 21 21" fill="none">
               <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
@@ -124,7 +142,7 @@ export default function LoginPage() {
               <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
               <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
             </svg>
-            Microsoft 365
+            {ms365Loading ? 'Connecting...' : 'Microsoft 365'}
           </button>
         </div>
 

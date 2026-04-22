@@ -8,3 +8,6 @@ export const logout = () =>
 
 export const getMe = () =>
   api.get('/auth/me')
+
+export const ms365Redirect = () =>
+  api.get('/auth/ms365/redirect')
