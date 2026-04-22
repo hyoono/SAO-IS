@@ -117,7 +117,7 @@ if ($proxyRows -match "0.0.0.0\s+80") {
 }
 
 if (-not $ConfigurePortProxy) {
-    $tcp80Rules = Get-Tcp80InboundAllowRules
+    $tcp80Rules = @(Get-Tcp80InboundAllowRules)
     if ($tcp80Rules.Count -gt 0) {
         $ruleNames = ($tcp80Rules | Select-Object -ExpandProperty Name -Unique | Select-Object -First 2) -join '; '
         Write-Result -Label "Firewall TCP 80" -Status "PASS" -Details ("Enabled rule(s): " + $ruleNames)

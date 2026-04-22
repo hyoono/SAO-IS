@@ -1,12 +1,13 @@
 # Phase 1 Signoff - SAO-IS
 
-Date: 2026-04-21
+Date: 2026-04-22
 Branch: feature/phase-1-scaffold
 Scope: Phase 1 (Project scaffolding and environment)
 
 ## Status Legend
 
 - PASS (Agent): Verified in this workspace via command execution
+- PASS (Human Evidence): Confirmed by operator from Windows/LAN/manual checks
 - NEEDS HUMAN EVIDENCE: Requires Windows/LAN/manual verification
 - DEFERRED: Intentionally postponed per operator instruction
 
@@ -30,7 +31,7 @@ Scope: Phase 1 (Project scaffolding and environment)
 |---|---|---|
 | php artisan migrate runs and creates all required tables with no errors | PASS (Agent) | php artisan migrate:status and migrate --force succeeded |
 | npm run dev starts Vite dev server on localhost | PASS (Agent) | VITE ready on http://localhost:5173 |
-| Nginx serves response on http://<server-ip>/ | PASS (Agent) | Windows helper reports HTTP Root StatusCode=200 via host IP |
+| Nginx serves response on http://<server-ip>/ | PASS (Human Evidence) | Operator confirmed host IP is reachable from other LAN devices |
 | MySQL reachable from Laravel .env config | PASS (Agent) | migrate and db:seed succeeded using current .env |
 | Server survives Windows reboot and services auto-start | DEFERRED | Deferred to end per operator instruction |
 
@@ -48,12 +49,12 @@ Scope: Phase 1 (Project scaffolding and environment)
 - scripts: bash scripts/verify-phase1-wsl.sh
 - scripts: powershell.exe -ExecutionPolicy Bypass -File <verify-phase1-windows.ps1>
 
-## Latest Human-Provided Evidence (2026-04-21)
+## Latest Human-Provided Evidence (2026-04-22)
 
 - WSL helper script reports PASS for nginx, php8.2-fpm, mysql, root URL, and API health URL.
-- Windows helper script reports PASS for host IP detection, WSL IP detection, proxy listener presence, root URL, and API health URL.
+- Windows helper script reports PASS for host IP detection, WSL IP detection, proxy listener presence, firewall TCP/80 rule, root URL, and API health URL.
 - Nginx route fallback was updated to route through index.php, and /up now returns HTTP 200.
-- Manual LAN device verification remains pending.
+- Operator confirmed http://192.168.1.13 is reachable from other LAN devices.
 
 ## Artifacts Added for Phase 1 Compliance
 
@@ -68,6 +69,5 @@ Scope: Phase 1 (Project scaffolding and environment)
 
 ## Remaining Work To Close Phase 1
 
-1. Capture evidence for LAN reachability from a second device at http://<windows-host-ip>.
-2. Confirm static IP assignment on the Windows host (separate from current listener/proxy validation).
-3. Perform deferred reboot/auto-start validation at the end.
+1. Confirm static IP assignment on the Windows host (separate from current listener/proxy validation).
+2. Perform deferred reboot/auto-start validation at the end.
