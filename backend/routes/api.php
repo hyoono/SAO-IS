@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,18 +19,12 @@ Route::get('/health', function () {
 });
 
 // ── Auth ──
-Route::prefix('auth')->group(function () {
-    Route::post('/login', function (Request $request) {
-        // Placeholder — Phase 2
-        return response()->json(['message' => 'Login endpoint — Phase 2'], 501);
-    });
+Route::prefix('auth')->middleware('web')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 
-    Route::post('/logout', function () {
-        return response()->json(['message' => 'Logout endpoint — Phase 2'], 501);
-    });
-
-    Route::get('/me', function () {
-        return response()->json(['message' => 'Auth me endpoint — Phase 2'], 501);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
     });
 
     // MS365 SSO — returns 501 until Azure AD is configured

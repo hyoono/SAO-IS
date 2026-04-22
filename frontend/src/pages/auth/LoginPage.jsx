@@ -1,18 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function LoginPage() {
+  const navigate = useNavigate()
+  const { login, isAuthenticated, loading: authLoading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [authLoading, isAuthenticated, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
-    // Login logic will be implemented in Phase 2
-    setError('Login not yet implemented — Phase 2')
-    setLoading(false)
+    setSubmitting(true)
+
+    try {
+      await login(email, password)
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      const message = err?.response?.data?.message
+        || err?.response?.data?.errors?.email?.[0]
+        || 'Invalid email or password.'
+      setError(message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -75,10 +94,10 @@ export default function LoginPage() {
             <button
               id="login-submit"
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-slate-900 cursor-pointer disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {submitting ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
 
