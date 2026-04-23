@@ -1,4 +1,5 @@
 import { useDashboardSummary } from '../../hooks/useDashboard'
+import { Link } from 'react-router-dom'
 
 const ROLE_MODULES = {
   admin: {
@@ -12,10 +13,12 @@ const ROLE_MODULES = {
       {
         title: 'Workflow Templates',
         detail: 'Maintain approval chains and enforce document policies.',
+        path: '/workflows',
       },
       {
         title: 'Audit Oversight',
         detail: 'Monitor sensitive actions and investigate anomalies quickly.',
+        path: '/notifications',
       },
     ],
   },
@@ -26,14 +29,17 @@ const ROLE_MODULES = {
       {
         title: 'Pending Reviews',
         detail: 'Prioritize newly submitted documents by request urgency.',
+        path: '/approvals',
       },
       {
         title: 'Approval Actions',
         detail: 'Approve, reject, or request revisions with clear notes.',
+        path: '/approvals',
       },
       {
         title: 'Daily Follow-ups',
         detail: 'Track unresolved cases and send reminders to stakeholders.',
+        path: '/notifications',
       },
     ],
   },
@@ -44,14 +50,17 @@ const ROLE_MODULES = {
       {
         title: 'Accreditation Packet',
         detail: 'Upload and maintain required files for org accreditation.',
+        path: '/documents',
       },
       {
         title: 'Event Requests',
         detail: 'Submit permits and monitor reviewer feedback in one place.',
+        path: '/documents',
       },
       {
         title: 'Compliance Timeline',
         detail: 'Stay ahead of deadlines and missing documentary items.',
+        path: '/documents',
       },
     ],
   },
@@ -62,14 +71,17 @@ const ROLE_MODULES = {
       {
         title: 'Clearance Submission',
         detail: 'Start new requests and attach supporting materials securely.',
+        path: '/documents',
       },
       {
         title: 'Status Tracking',
         detail: 'See where each request sits in the review pipeline.',
+        path: '/documents',
       },
       {
         title: 'Action Needed',
         detail: 'Resolve reviewer comments before deadlines are missed.',
+        path: '/notifications',
       },
     ],
   },
@@ -80,30 +92,64 @@ const ROLE_MODULES = {
       {
         title: 'Assigned Endorsements',
         detail: 'Review requests delegated to your academic unit.',
+        path: '/approvals',
       },
       {
         title: 'Decision Log',
         detail: 'Record endorsement outcomes with contextual notes.',
+        path: '/approvals',
       },
       {
         title: 'Pending Follow-up',
         detail: 'Respond to clarifications and keep workflows unblocked.',
+        path: '/notifications',
       },
     ],
   },
 }
 
-function ModuleCard({ title, detail }) {
+function resolveModulePath(role, title) {
+  const loweredTitle = (title || '').toLowerCase()
+
+  if (loweredTitle.includes('workflow')) {
+    return '/workflows'
+  }
+
+  if (loweredTitle.includes('notification')) {
+    return '/notifications'
+  }
+
+  if (loweredTitle.includes('review') || loweredTitle.includes('endorsement') || loweredTitle.includes('awaiting info')) {
+    return '/approvals'
+  }
+
+  if (loweredTitle.includes('request') || loweredTitle.includes('document') || loweredTitle.includes('compliance') || loweredTitle.includes('progress')) {
+    return '/documents'
+  }
+
+  return ROLE_MODULES[role]?.cards.find((card) => card.title === title)?.path
+}
+
+function ModuleCard({ title, detail, path }) {
   return (
     <div className="rounded-xl border border-white/10 bg-slate-950/60 p-4">
       <p className="text-sm font-semibold text-white">{title}</p>
       <p className="mt-2 text-sm text-slate-300">{detail}</p>
-      <button
-        type="button"
-        className="mt-4 inline-flex items-center rounded-lg border border-blue-400/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200"
-      >
-        Coming soon in Phase 2
-      </button>
+      {path ? (
+        <Link
+          to={path}
+          className="mt-4 inline-flex items-center rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-500/20"
+        >
+          Open module
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className="mt-4 inline-flex items-center rounded-lg border border-blue-400/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200"
+        >
+          Coming soon in Phase 2
+        </button>
+      )}
     </div>
   )
 }
@@ -121,6 +167,7 @@ export default function RoleDashboardModules({ role }) {
     ? apiModules.map((entry) => ({
       title: entry.title,
       detail: `${entry.detail} Current value: ${entry.value}.`,
+      path: resolveModulePath(role, entry.title),
     }))
     : moduleConfig.cards
 
@@ -140,7 +187,7 @@ export default function RoleDashboardModules({ role }) {
 
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {cards.map((card) => (
-          <ModuleCard key={card.title} title={card.title} detail={card.detail} />
+          <ModuleCard key={card.title} title={card.title} detail={card.detail} path={card.path} />
         ))}
       </div>
     </section>

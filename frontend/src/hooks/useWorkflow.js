@@ -23,3 +23,11 @@ export function useApprovalQueue() {
     queryFn: () => approvalsApi.getQueue().then((r) => r.data),
   })
 }
+
+export function useApprovalHistory(documentId) {
+  return useQuery({
+    queryKey: ['approvals', 'history', documentId],
+    queryFn: () => approvalsApi.getApprovalHistory(documentId).then((r) => r.data),
+    enabled: !!documentId,
+  })
+}

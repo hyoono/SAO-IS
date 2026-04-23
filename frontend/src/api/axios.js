@@ -25,7 +25,10 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const requestUrl = error.config?.url || ''
+    const isAuthBootstrapRequest = requestUrl.includes('/auth/me') || requestUrl.includes('/auth/login') || requestUrl.includes('/auth/logout')
+
+    if (error.response?.status === 401 && !isAuthBootstrapRequest && window.location.pathname !== '/login') {
       window.location.href = '/login'
     }
     return Promise.reject(error)

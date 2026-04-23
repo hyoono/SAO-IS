@@ -38,11 +38,27 @@ class DashboardController extends Controller
 
     private function adminModules(int $unreadNotifications): array
     {
+        $adminQueue = Document::whereIn('status', ['pending', 'in_review'])
+            ->whereHas('currentStep', function ($query): void {
+                $query->where('assignee_role', 'admin');
+            })
+            ->count();
+
         return [
             [
                 'title' => 'Active Users',
                 'value' => User::count(),
                 'detail' => 'Total accounts registered in SAO-IS.',
+            ],
+            [
+                'title' => 'Pending Reviews',
+                'value' => $adminQueue,
+                'detail' => 'Documents currently waiting for admin review.',
+            ],
+            [
+                'title' => 'Documents Registry',
+                'value' => Document::count(),
+                'detail' => 'Documents currently stored in the system.',
             ],
             [
                 'title' => 'Workflow Templates',

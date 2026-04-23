@@ -2,6 +2,13 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import LoginPage from './pages/auth/LoginPage.jsx'
+import WorkflowsPage from './pages/WorkflowsPage.jsx'
+import WorkflowDetailPage from './pages/WorkflowDetailPage.jsx'
+import DocumentsPage from './pages/DocumentsPage.jsx'
+import DocumentDetailPage from './pages/DocumentDetailPage.jsx'
+import ApprovalsPage from './pages/ApprovalsPage.jsx'
+import ApprovalDetailPage from './pages/ApprovalDetailPage.jsx'
+import NotificationsPage from './pages/NotificationsPage.jsx'
 import { useAuth } from './hooks/useAuth'
 
 function RoleHomeRedirect() {
@@ -35,6 +42,62 @@ export default function App() {
         element={(
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/workflows"
+        element={(
+          <ProtectedRoute>
+            <WorkflowsPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/workflows/:id"
+        element={(
+          <ProtectedRoute>
+            <WorkflowDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/documents"
+        element={(
+          <ProtectedRoute>
+            <DocumentsPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/documents/:id"
+        element={(
+          <ProtectedRoute>
+            <DocumentDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/approvals"
+        element={(
+          <ProtectedRoute>
+            <ApprovalsPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/approvals/:id"
+        element={(
+          <ProtectedRoute>
+            <ApprovalDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/notifications"
+        element={(
+          <ProtectedRoute>
+            <NotificationsPage />
           </ProtectedRoute>
         )}
       />
