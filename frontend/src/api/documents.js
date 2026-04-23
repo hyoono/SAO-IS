@@ -3,11 +3,16 @@ import api from './axios'
 export const getDocuments = (params) =>
   api.get('/documents', { params })
 
+export const getDocumentTypes = () =>
+  api.get('/document-types')
+
 export const getDocument = (id) =>
   api.get(`/documents/${id}`)
 
 export const submitDocument = (data) =>
-  api.post('/documents', data)
+  api.post('/documents', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
 
 export const searchDocuments = (query) =>
   api.get('/documents/search', { params: { q: query } })

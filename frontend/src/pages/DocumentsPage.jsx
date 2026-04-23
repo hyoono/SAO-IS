@@ -60,6 +60,14 @@ export default function DocumentsPage() {
           >
             Back to dashboard
           </Link>
+          {['student', 'org_officer', 'faculty', 'admin', 'staff'].includes(role) && (
+            <Link
+              to="/submit"
+              className="inline-flex items-center rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:bg-emerald-500/20"
+            >
+              Submit document
+            </Link>
+          )}
         </div>
 
         <div className="mt-8 rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">

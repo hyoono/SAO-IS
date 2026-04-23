@@ -8,6 +8,13 @@ export function useDocuments(params) {
   })
 }
 
+export function useDocumentTypes() {
+  return useQuery({
+    queryKey: ['document-types'],
+    queryFn: () => documentsApi.getDocumentTypes().then((r) => r.data),
+  })
+}
+
 export function useDocument(id) {
   return useQuery({
     queryKey: ['document', id],

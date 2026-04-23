@@ -50,12 +50,12 @@ const ROLE_MODULES = {
       {
         title: 'Accreditation Packet',
         detail: 'Upload and maintain required files for org accreditation.',
-        path: '/documents',
+        path: '/submit',
       },
       {
         title: 'Event Requests',
         detail: 'Submit permits and monitor reviewer feedback in one place.',
-        path: '/documents',
+        path: '/submit',
       },
       {
         title: 'Compliance Timeline',
@@ -71,7 +71,7 @@ const ROLE_MODULES = {
       {
         title: 'Clearance Submission',
         detail: 'Start new requests and attach supporting materials securely.',
-        path: '/documents',
+        path: '/submit',
       },
       {
         title: 'Status Tracking',

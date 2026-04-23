@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\DocumentTypeController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\WorkflowController;
@@ -46,10 +47,15 @@ Route::prefix('auth')->middleware('web')->group(function () {
 Route::middleware(['web', 'auth:sanctum'])->group(function () {
     Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
+    Route::get('/document-types', [DocumentTypeController::class, 'index']);
+
+    Route::post('/documents', [DocumentController::class, 'store']);
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::get('/documents/search', [DocumentController::class, 'search']);
     Route::get('/documents/{document}', [DocumentController::class, 'show']);
     Route::get('/documents/{document}/versions', [DocumentController::class, 'versions']);
+    Route::post('/documents/{document}/versions', [DocumentController::class, 'uploadVersion']);
+    Route::get('/documents/{document}/versions/{version}/download', [DocumentController::class, 'downloadVersion']);
     Route::patch('/documents/{document}/archive', [DocumentController::class, 'archive']);
 
     Route::get('/approvals/queue', [ApprovalController::class, 'queue']);
