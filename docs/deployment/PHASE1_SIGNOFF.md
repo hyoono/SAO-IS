@@ -70,4 +70,4 @@ Scope: Phase 1 (Project scaffolding and environment)
 ## Remaining Work (Deferred To Later Phase)
 
 1. Confirm static IP assignment on the Windows host.
-2. Perform reboot and auto-start validation.
+2. Perform reboot and auto-start validation. See [PHASE1_REBOOT_AUTOSTART_CHECKLIST.md](PHASE1_REBOOT_AUTOSTART_CHECKLIST.md).
