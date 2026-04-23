@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Approval;
+use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\DocumentVersion;
@@ -189,5 +190,48 @@ class Phase2DemoDataSeeder extends Seeder
                 'is_read' => false,
             ]
         );
+
+            AuditLog::updateOrCreate(
+                [
+                    'user_id' => $admin->id,
+                    'document_id' => $pendingDocument->id,
+                    'action' => 'document_submitted',
+                ],
+                [
+                    'details' => [
+                        'title' => $pendingDocument->title,
+                        'status' => $pendingDocument->status,
+                        'note' => 'Seeded pending review item for manual verification.',
+                    ],
+                ]
+            );
+
+            AuditLog::updateOrCreate(
+                [
+                    'user_id' => $admin->id,
+                    'document_id' => $historyDocument->id,
+                    'action' => 'document_approved',
+                ],
+                [
+                    'details' => [
+                        'title' => $historyDocument->title,
+                        'status' => $historyDocument->status,
+                        'note' => 'Seeded approved document for audit trail verification.',
+                    ],
+                ]
+            );
+
+            AuditLog::updateOrCreate(
+                [
+                    'user_id' => $admin->id,
+                    'document_id' => null,
+                    'action' => 'audit_viewed',
+                ],
+                [
+                    'details' => [
+                        'note' => 'Seeded audit entry to show general administrative activity.',
+                    ],
+                ]
+            );
     }
 }

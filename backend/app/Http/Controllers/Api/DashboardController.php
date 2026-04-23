@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Document;
+use App\Models\AuditLog;
 use App\Models\Notification;
 use App\Models\User;
 use App\Models\WorkflowTemplate;
@@ -59,6 +60,11 @@ class DashboardController extends Controller
                 'title' => 'Documents Registry',
                 'value' => Document::count(),
                 'detail' => 'Documents currently stored in the system.',
+            ],
+            [
+                'title' => 'Audit Entries',
+                'value' => AuditLog::count(),
+                'detail' => 'Recorded administrative actions and document events.',
             ],
             [
                 'title' => 'Workflow Templates',

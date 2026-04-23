@@ -18,7 +18,7 @@ const ROLE_MODULES = {
       {
         title: 'Audit Oversight',
         detail: 'Monitor sensitive actions and investigate anomalies quickly.',
-        path: '/notifications',
+        path: '/audit-logs',
       },
     ],
   },
@@ -113,6 +113,10 @@ function resolveModulePath(role, title) {
 
   if (loweredTitle.includes('workflow')) {
     return '/workflows'
+  }
+
+  if (loweredTitle.includes('audit')) {
+    return '/audit-logs'
   }
 
   if (loweredTitle.includes('notification')) {

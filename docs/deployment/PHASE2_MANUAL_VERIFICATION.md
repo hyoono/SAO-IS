@@ -108,7 +108,17 @@ Use your browser or a terminal session while logged in.
    - Read/unread state is visible if data exists
    - Mark-read actions return success and refresh the list
 
-## 8) Workflow Surface
+## 8) Audit Logs Surface
+
+1. From the admin dashboard, click the Audit Oversight card.
+2. Confirm the page route is `/audit-logs` and the page renders an audit log list.
+3. If data exists, confirm actor, document, action, and details are visible.
+4. Expected result:
+   - Audit log list loads successfully
+   - Admin-only access is enforced
+   - Seeded audit entries appear when demo data is present
+
+## 9) Workflow Surface
 
 1. From the admin dashboard, click the Workflow Templates card (Open module).
 2. Confirm the page route is `/workflows` and the page renders a workflow list container.
@@ -120,7 +130,7 @@ Use your browser or a terminal session while logged in.
    - Workflow row links open a detail page
    - Workflow details and step lists return `200 OK`
 
-## 9) Logout Flow
+## 10) Logout Flow
 
 1. Click Sign out.
 2. Refresh the page or revisit a protected dashboard route.
@@ -129,7 +139,7 @@ Use your browser or a terminal session while logged in.
    - Protected routes redirect back to `/login`
    - `GET /api/v1/auth/me` returns `401` after logout
 
-## 10) LAN Verification
+## 11) LAN Verification
 
 1. From another device on the same LAN, open `http://<windows-host-ip>`.
 2. Confirm the site loads from the remote device, not just on the Windows host.

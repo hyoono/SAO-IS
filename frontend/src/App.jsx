@@ -9,6 +9,7 @@ import DocumentDetailPage from './pages/DocumentDetailPage.jsx'
 import ApprovalsPage from './pages/ApprovalsPage.jsx'
 import ApprovalDetailPage from './pages/ApprovalDetailPage.jsx'
 import NotificationsPage from './pages/NotificationsPage.jsx'
+import AuditLogsPage from './pages/AuditLogsPage.jsx'
 import { useAuth } from './hooks/useAuth'
 
 function RoleHomeRedirect() {
@@ -98,6 +99,14 @@ export default function App() {
         element={(
           <ProtectedRoute>
             <NotificationsPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/audit-logs"
+        element={(
+          <ProtectedRoute>
+            <AuditLogsPage />
           </ProtectedRoute>
         )}
       />

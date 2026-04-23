@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApprovalController;
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\NotificationController;
@@ -60,6 +61,8 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
 
     Route::get('/workflows', [WorkflowController::class, 'index']);
     Route::get('/workflows/{workflow}', [WorkflowController::class, 'show']);
