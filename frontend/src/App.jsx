@@ -12,6 +12,9 @@ import NotificationsPage from './pages/NotificationsPage.jsx'
 import AuditLogsPage from './pages/AuditLogsPage.jsx'
 import WorkflowsPage from './pages/WorkflowsPage.jsx'
 import WorkflowDetailPage from './pages/WorkflowDetailPage.jsx'
+import WorkflowBuilderPage from './pages/WorkflowBuilderPage.jsx'
+import UsersPage from './pages/UsersPage.jsx'
+import DocumentTypesPage from './pages/DocumentTypesPage.jsx'
 import { useAuth } from './hooks/useAuth'
 
 function RoleHomeRedirect() {
@@ -39,10 +42,11 @@ export default function App() {
         <Route path="/approvals/:id" element={<ApprovalDetailPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/workflows" element={<WorkflowsPage />} />
+        <Route path="/workflows/new" element={<WorkflowBuilderPage />} />
         <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
         <Route path="/audit-logs" element={<AuditLogsPage />} />
-        <Route path="/admin/users" element={<DashboardPage />} />
-        <Route path="/admin/document-types" element={<DashboardPage />} />
+        <Route path="/admin/users" element={<UsersPage />} />
+        <Route path="/admin/document-types" element={<DocumentTypesPage />} />
         <Route path="/admin/archive" element={<DocumentsPage archived />} />
       </Route>
 
