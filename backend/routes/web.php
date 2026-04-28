@@ -2,17 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-$serveFrontend = function () {
-    $indexPath = public_path('index.html');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| During development, the frontend runs on Vite (localhost:5173).
+| In production, deploy the frontend build to backend/public/ using
+| scripts/deploy-frontend.sh, then uncomment the SPA catch-all below.
+|
+*/
 
-    if (!file_exists($indexPath)) {
-        abort(500, 'Frontend build not deployed. Run scripts/deploy-frontend.sh.');
-    }
-
-    return response()->file($indexPath);
-};
-
-Route::get('/', $serveFrontend);
-
-Route::get('/{any}', $serveFrontend)
-    ->where('any', '^(?!api).*$');
+// SPA catch-all — uncomment ONLY after deploying frontend build:
+// Route::get('/{any}', function () {
+//     return response()->file(public_path('index.html'));
+// })->where('any', '^(?!api).*$');

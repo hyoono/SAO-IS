@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 | All routes are prefixed with /api/v1 (configured in bootstrap/app.php).
 | Auth: Laravel Sanctum SPA cookie-based authentication.
 |
+| NOTE: Do NOT add middleware('web') here — statefulApi() in bootstrap
+| already applies session/cookie/CSRF middleware for stateful requests.
+| Adding it again causes double session init → session invalidation.
+|
 */
 
 // ── Health check ──
@@ -27,8 +31,8 @@ Route::get('/health', function () {
 });
 
 // ── Auth ──
-Route::prefix('auth')->middleware('web')->group(function () {
-    Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -46,7 +50,7 @@ Route::prefix('auth')->middleware('web')->group(function () {
 });
 
 // ── Authenticated routes ──
-Route::middleware(['web', 'auth:sanctum', 'audit'])->group(function () {
+Route::middleware(['auth:sanctum', 'audit'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
