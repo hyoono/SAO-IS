@@ -159,9 +159,17 @@ class DocumentController extends Controller
         $term = trim((string) $request->query('q', ''));
 
         $query = Document::query()
-            ->with(['documentType:id,name'])
+            ->with(['documentType:id,name', 'submitter:id,name,email'])
             ->when($term !== '', function ($builder) use ($term): void {
-                $builder->where('title', 'like', "%{$term}%");
+                $builder->where(function ($q) use ($term) {
+                    $q->where('title', 'like', "%{$term}%")
+                      ->orWhereHas('versions', function ($vq) use ($term) {
+                          $vq->where('original_filename', 'like', "%{$term}%");
+                      })
+                      ->orWhereHas('documentType', function ($dtq) use ($term) {
+                          $dtq->where('name', 'like', "%{$term}%");
+                      });
+                });
             })
             ->latest();
 

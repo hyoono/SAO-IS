@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DocumentTypeController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WorkflowController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,33 +45,61 @@ Route::prefix('auth')->middleware('web')->group(function () {
     });
 });
 
-Route::middleware(['web', 'auth:sanctum'])->group(function () {
+// ── Authenticated routes ──
+Route::middleware(['web', 'auth:sanctum', 'audit'])->group(function () {
+
+    // Dashboard
     Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
-    Route::get('/document-types', [DocumentTypeController::class, 'index']);
+    // ── Users (admin only for list/create, admin+self for show/update) ──
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+    });
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::patch('/users/{user}', [UserController::class, 'update']);
 
-    Route::post('/documents', [DocumentController::class, 'store']);
+    // ── Document Types ──
+    Route::get('/document-types', [DocumentTypeController::class, 'index']);
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::post('/document-types', [DocumentTypeController::class, 'store']);
+        Route::patch('/document-types/{documentType}', [DocumentTypeController::class, 'update']);
+    });
+
+    // ── Documents ──
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::get('/documents/search', [DocumentController::class, 'search']);
+    Route::post('/documents', [DocumentController::class, 'store']);
     Route::get('/documents/{document}', [DocumentController::class, 'show']);
     Route::get('/documents/{document}/versions', [DocumentController::class, 'versions']);
     Route::post('/documents/{document}/versions', [DocumentController::class, 'uploadVersion']);
     Route::get('/documents/{document}/versions/{version}/download', [DocumentController::class, 'downloadVersion']);
     Route::patch('/documents/{document}/archive', [DocumentController::class, 'archive']);
 
+    // ── Approvals ──
     Route::get('/approvals/queue', [ApprovalController::class, 'queue']);
     Route::post('/documents/{document}/approve', [ApprovalController::class, 'approve']);
     Route::post('/documents/{document}/reject', [ApprovalController::class, 'reject']);
     Route::post('/documents/{document}/request-info', [ApprovalController::class, 'requestInfo']);
     Route::get('/documents/{document}/history', [ApprovalController::class, 'history']);
 
+    // ── Notifications ──
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 
-    Route::get('/audit-logs', [AuditLogController::class, 'index']);
+    // ── Audit Logs (admin only) ──
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/audit-logs', [AuditLogController::class, 'index']);
+        Route::get('/documents/{document}/audit', [AuditLogController::class, 'documentAudit']);
+    });
 
-    Route::get('/workflows', [WorkflowController::class, 'index']);
-    Route::get('/workflows/{workflow}', [WorkflowController::class, 'show']);
-    Route::get('/workflows/{workflow}/steps', [WorkflowController::class, 'steps']);
+    // ── Workflows (admin + staff) ──
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::get('/workflows', [WorkflowController::class, 'index']);
+        Route::post('/workflows', [WorkflowController::class, 'store']);
+        Route::get('/workflows/{workflow}', [WorkflowController::class, 'show']);
+        Route::put('/workflows/{workflow}', [WorkflowController::class, 'update']);
+        Route::get('/workflows/{workflow}/steps', [WorkflowController::class, 'steps']);
+    });
 });

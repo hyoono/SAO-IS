@@ -1,74 +1,58 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useApprovalQueue } from '../hooks/useWorkflow'
-import { useAuth } from '../hooks/useAuth'
-
-function ApprovalRow({ item }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/60 p-4">
-      <p className="text-sm font-semibold text-white">{item.title || `Document #${item.id}`}</p>
-      <p className="mt-1 text-xs text-slate-400">ID: {item.id} | Status: {item.status || 'N/A'}</p>
-      <p className="mt-2 text-sm text-slate-300">
-        Submitter: {item.submitter?.name || item.submitter?.email || 'N/A'}
-      </p>
-      <p className="mt-1 text-xs text-blue-200/90">
-        Current step: {item.current_step?.name || item.currentStep?.name || 'N/A'}
-      </p>
-      <Link
-        to={`/approvals/${item.id}`}
-        className="mt-4 inline-flex items-center rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-500/20"
-      >
-        Review document
-      </Link>
-    </div>
-  )
-}
+import StatusBadge from '../components/ui/StatusBadge.jsx'
+import { formatDateTime } from '../utils/formatters'
 
 export default function ApprovalsPage() {
-  const { role } = useAuth()
-  const { data, isLoading, isError, error } = useApprovalQueue()
-  const items = Array.isArray(data?.data) ? data.data : []
+  const queueQuery = useApprovalQueue()
+  const items = useMemo(() => Array.isArray(queueQuery.data?.data) ? queueQuery.data.data : [], [queueQuery.data])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-300/70">SAO-IS</p>
-            <h1 className="text-3xl font-semibold mt-2">Approvals Queue</h1>
-            <p className="text-slate-300 mt-2">Review documents currently assigned to your role or account.</p>
-          </div>
-
-          <Link
-            to={`/dashboard/${role || 'student'}`}
-            className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-          >
-            Back to dashboard
-          </Link>
-        </div>
-
-        <div className="mt-8 rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">
-          {isLoading && <p className="text-sm text-blue-200/80">Loading approval queue...</p>}
-
-          {isError && (
-            <p className="text-sm text-amber-200/90">
-              Unable to load approval queue right now.
-              {error?.response?.status ? ` (HTTP ${error.response.status})` : ''}
-            </p>
-          )}
-
-          {!isLoading && !isError && items.length === 0 && (
-            <p className="text-sm text-slate-300">No approval items are currently assigned to you.</p>
-          )}
-
-          {!isLoading && !isError && items.length > 0 && (
-            <div className="grid gap-4 md:grid-cols-2">
-              {items.map((item) => (
-                <ApprovalRow key={item.id} item={item} />
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="max-w-6xl mx-auto space-y-5">
+      <div>
+        <h2 className="text-2xl font-semibold text-white">Approvals Queue</h2>
+        <p className="text-sm text-slate-400 mt-1">Documents awaiting your review.</p>
       </div>
+
+      {queueQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+
+      {!queueQuery.isLoading && items.length === 0 && (
+        <div className="py-16 text-center">
+          <p className="text-slate-400">No documents pending your review.</p>
+        </div>
+      )}
+
+      {items.length > 0 && (
+        <div className="rounded-xl border border-white/10 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-950/60 border-b border-white/5">
+              <tr>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Title</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Status</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Submitter</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Step</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Submitted</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {items.map((doc) => (
+                <tr key={doc.id} className="hover:bg-white/[0.02]">
+                  <td className="px-4 py-3 text-white font-medium">{doc.title}</td>
+                  <td className="px-4 py-3"><StatusBadge status={doc.status} /></td>
+                  <td className="px-4 py-3 text-slate-400">{doc.submitter?.name || '—'}</td>
+                  <td className="px-4 py-3 text-slate-400 text-xs">{doc.current_step?.name || doc.currentStep?.name || '—'}</td>
+                  <td className="px-4 py-3 text-slate-400 text-xs">{formatDateTime(doc.created_at)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Link to={`/approvals/${doc.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Review →</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

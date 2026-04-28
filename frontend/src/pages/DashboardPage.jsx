@@ -1,89 +1,53 @@
-import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useMemo } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../hooks/useAuth'
-import RoleDashboardModules from '../components/dashboard/RoleDashboardModules'
-
-const ROLE_TITLES = {
-  admin: 'Admin Dashboard',
-  staff: 'Staff Dashboard',
-  org_officer: 'Organization Officer Dashboard',
-  student: 'Student Dashboard',
-  faculty: 'Faculty Dashboard',
-}
+import api from '../api/axios'
 
 export default function DashboardPage() {
-  const navigate = useNavigate()
-  const { role: routeRole } = useParams()
-  const { user, logout } = useAuth()
-  const [loggingOut, setLoggingOut] = useState(false)
-  const actualRole = user?.role || null
-  const roleMatchesRoute = actualRole && routeRole === actualRole
+  const { role: paramRole } = useParams()
+  const { user, role } = useAuth()
 
-  const handleLogout = async () => {
-    setLoggingOut(true)
+  const { data, isLoading } = useQuery({
+    queryKey: ['dashboard', 'summary'],
+    queryFn: () => api.get('/dashboard/summary').then(r => r.data),
+  })
 
-    try {
-      await logout()
-      navigate('/login', { replace: true })
-    } finally {
-      setLoggingOut(false)
-    }
-  }
+  const modules = useMemo(() => Array.isArray(data?.modules) ? data.modules : [], [data])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-blue-300/70">SAO-IS</p>
-              <h1 className="text-3xl font-semibold mt-2">{ROLE_TITLES[actualRole] || 'Phase 2 Dashboard'}</h1>
-              <p className="text-slate-300 mt-2">Role-based routing is active for authenticated sessions.</p>
-            </div>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-white">Welcome, {user?.name || 'User'}</h2>
+        <p className="text-sm text-slate-400 mt-1 capitalize">{role} Dashboard</p>
+      </div>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={loggingOut}
-              className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 transition disabled:opacity-60"
-            >
-              {loggingOut ? 'Signing out...' : 'Sign out'}
-            </button>
-          </div>
+      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading dashboard…</p>}
 
-          {!roleMatchesRoute && (
-            <div className="mt-6 rounded-xl border border-amber-300/30 bg-amber-500/10 p-4 text-amber-100">
-              <p className="font-medium">Role mismatch detected</p>
-              <p className="mt-1 text-sm text-amber-200/90">
-                You are signed in as <strong>{actualRole}</strong> but requested dashboard route <strong>{routeRole}</strong>.
-              </p>
-              <Link
-                to={`/dashboard/${actualRole}`}
-                className="inline-block mt-3 text-sm font-medium underline underline-offset-4"
-              >
-                Go to my dashboard
-              </Link>
+      {!isLoading && modules.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m, i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-slate-950/40 p-5 hover:border-blue-500/20 transition-colors">
+              <p className="text-xs text-slate-500 uppercase tracking-wider">{m.title}</p>
+              <p className="text-3xl font-bold text-white mt-2">{m.value}</p>
+              <p className="text-xs text-slate-400 mt-2">{m.detail}</p>
             </div>
+          ))}
+        </div>
+      )}
+
+      {/* Quick actions */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-300 mb-3">Quick Actions</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/documents" className="px-4 py-2 text-xs font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg">View Documents</Link>
+          {['student', 'org_officer', 'faculty', 'admin', 'staff'].includes(role) && (
+            <Link to="/submit" className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-lg">Submit Document</Link>
           )}
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide">Name</p>
-              <p className="text-lg mt-1">{user?.name || 'N/A'}</p>
-            </div>
-
-            <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-              <p className="text-xs text-slate-400 uppercase tracking-wide">Role</p>
-              <p className="text-lg mt-1 capitalize">{user?.role || 'N/A'}</p>
-            </div>
-
-            <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4 sm:col-span-2">
-              <p className="text-xs text-slate-400 uppercase tracking-wide">Email</p>
-              <p className="text-lg mt-1 break-all">{user?.email || 'N/A'}</p>
-            </div>
-          </div>
-
-          <RoleDashboardModules role={actualRole} />
+          {['admin', 'staff', 'faculty'].includes(role) && (
+            <Link to="/approvals" className="px-4 py-2 text-xs font-medium text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg">Review Queue</Link>
+          )}
+          <Link to="/notifications" className="px-4 py-2 text-xs font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg">Notifications</Link>
         </div>
       </div>
     </div>

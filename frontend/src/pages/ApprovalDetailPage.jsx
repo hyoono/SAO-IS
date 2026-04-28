@@ -1,195 +1,108 @@
-import { useMemo, useState } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useMemo } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../hooks/useAuth'
-import { useApprovalHistory } from '../hooks/useWorkflow'
 import { useDocument } from '../hooks/useDocuments'
 import * as approvalsApi from '../api/approvals'
-
-function ActionButton({ children, onClick, disabled, tone = 'emerald' }) {
-  const toneClasses = tone === 'red'
-    ? 'border-red-400/40 bg-red-500/10 text-red-200 hover:bg-red-500/20'
-    : tone === 'amber'
-      ? 'border-amber-400/40 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
-      : 'border-emerald-400/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20'
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium disabled:opacity-60 ${toneClasses}`}
-    >
-      {children}
-    </button>
-  )
-}
+import StatusBadge from '../components/ui/StatusBadge.jsx'
+import { formatDateTime } from '../utils/formatters'
 
 export default function ApprovalDetailPage() {
   const { id } = useParams()
-  const documentId = id || ''
   const { role } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [remarks, setRemarks] = useState('')
+  const [actionMsg, setActionMsg] = useState('')
 
-  const documentQuery = useDocument(documentId)
-  const historyQuery = useApprovalHistory(documentId)
-
-  const approveMutation = useMutation({
-    mutationFn: () => approvalsApi.approve(documentId, { remarks }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'queue'] })
-      await queryClient.invalidateQueries({ queryKey: ['document', documentId] })
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'history', documentId] })
-      navigate('/approvals')
-    },
+  const documentQuery = useDocument(id)
+  const historyQuery = useQuery({
+    queryKey: ['document', id, 'history'],
+    queryFn: () => approvalsApi.getApprovalHistory(id).then(r => r.data),
+    enabled: !!id,
   })
 
-  const rejectMutation = useMutation({
-    mutationFn: () => approvalsApi.reject(documentId, { remarks }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'queue'] })
-      await queryClient.invalidateQueries({ queryKey: ['document', documentId] })
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'history', documentId] })
-      navigate('/approvals')
-    },
-  })
+  const history = useMemo(() => Array.isArray(historyQuery.data) ? historyQuery.data : [], [historyQuery.data])
+  const doc = documentQuery.data
 
-  const requestInfoMutation = useMutation({
-    mutationFn: () => approvalsApi.requestInfo(documentId, { remarks }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'queue'] })
-      await queryClient.invalidateQueries({ queryKey: ['document', documentId] })
-      await queryClient.invalidateQueries({ queryKey: ['approvals', 'history', documentId] })
-      navigate('/approvals')
-    },
-  })
-
-  const document = documentQuery.data
-  const history = useMemo(() => {
-    if (Array.isArray(historyQuery.data)) {
-      return historyQuery.data
-    }
-
-    return []
-  }, [historyQuery.data])
-
-  if (!documentId) {
-    return <Navigate to="/approvals" replace />
+  const doAction = (action) => {
+    const fn = action === 'approve' ? approvalsApi.approve
+      : action === 'reject' ? approvalsApi.reject
+      : approvalsApi.requestInfo
+    return fn(id, { remarks })
   }
 
-  const canAct = ['admin', 'staff', 'faculty'].includes(role)
-  const reviewable = ['pending', 'in_review'].includes(document?.status)
+  const actionMutation = useMutation({
+    mutationFn: doAction,
+    onSuccess: (res) => {
+      setActionMsg(res.data.message)
+      setRemarks('')
+      queryClient.invalidateQueries({ queryKey: ['document', id] })
+      queryClient.invalidateQueries({ queryKey: ['document', id, 'history'] })
+      queryClient.invalidateQueries({ queryKey: ['approvals'] })
+    },
+    onError: (err) => setActionMsg(err?.response?.data?.message || 'Action failed.'),
+  })
+
+  const canReview = doc && ['pending', 'in_review'].includes(doc.status) && ['admin', 'staff', 'faculty'].includes(role)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-300/70">SAO-IS</p>
-            <h1 className="text-3xl font-semibold mt-2">Approval Review</h1>
-            <p className="text-slate-300 mt-2">Inspect a queue item and take an approval decision when allowed.</p>
-          </div>
+    <div className="max-w-4xl mx-auto space-y-6">
+      {documentQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate('/approvals')}
-              className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-            >
-              Back to queue
-            </button>
-            <Link
-              to={`/dashboard/${role || 'student'}`}
-              className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-            >
-              Dashboard
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">
-          {documentQuery.isLoading && <p className="text-sm text-blue-200/80">Loading approval item...</p>}
-          {documentQuery.isError && <p className="text-sm text-amber-200/90">Unable to load this approval item.</p>}
-
-          {!documentQuery.isLoading && !documentQuery.isError && document && (
-            <div className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-                  <p className="text-xs text-slate-400 uppercase tracking-wide">Title</p>
-                  <p className="text-lg mt-1">{document.title || 'N/A'}</p>
-                </div>
-                <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-                  <p className="text-xs text-slate-400 uppercase tracking-wide">Status</p>
-                  <p className="text-lg mt-1 capitalize">{document.status || 'N/A'}</p>
-                </div>
-                <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-                  <p className="text-xs text-slate-400 uppercase tracking-wide">Submitter</p>
-                  <p className="text-lg mt-1">{document.submitter?.name || document.submitter?.email || 'N/A'}</p>
-                </div>
-                <div className="rounded-xl bg-slate-950/60 border border-white/10 p-4">
-                  <p className="text-xs text-slate-400 uppercase tracking-wide">Current Step</p>
-                  <p className="text-lg mt-1">{document.currentStep?.name || document.current_step?.name || 'N/A'}</p>
-                </div>
-              </div>
-
-              {canAct && reviewable && (
-                <div className="rounded-xl border border-white/10 bg-slate-950/60 p-4 space-y-4">
-                  <div>
-                    <label htmlFor="remarks" className="block text-sm font-medium text-slate-300 mb-2">Remarks</label>
-                    <textarea
-                      id="remarks"
-                      value={remarks}
-                      onChange={(e) => setRemarks(e.target.value)}
-                      rows={4}
-                      className="w-full rounded-lg border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                      placeholder="Optional notes for the decision"
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    <ActionButton onClick={() => approveMutation.mutate()} disabled={approveMutation.isPending}>
-                      {approveMutation.isPending ? 'Approving...' : 'Approve'}
-                    </ActionButton>
-                    <ActionButton onClick={() => rejectMutation.mutate()} disabled={rejectMutation.isPending} tone="red">
-                      {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
-                    </ActionButton>
-                    <ActionButton onClick={() => requestInfoMutation.mutate()} disabled={requestInfoMutation.isPending} tone="amber">
-                      {requestInfoMutation.isPending ? 'Sending...' : 'Request info'}
-                    </ActionButton>
-                  </div>
-                </div>
-              )}
-
-              {!reviewable && (
-                <p className="text-sm text-slate-300">This document is not currently in a reviewable state.</p>
-              )}
-
-              <div>
-                <h2 className="text-xl font-semibold">Approval History</h2>
-                {historyQuery.isLoading && <p className="mt-2 text-sm text-blue-200/80">Loading history...</p>}
-                {historyQuery.isError && <p className="mt-2 text-sm text-amber-200/90">Unable to load approval history.</p>}
-                {!historyQuery.isLoading && !historyQuery.isError && history.length === 0 && (
-                  <p className="mt-2 text-sm text-slate-300">No approval history found for this item.</p>
-                )}
-                {!historyQuery.isLoading && !historyQuery.isError && history.length > 0 && (
-                  <div className="mt-3 grid gap-3 md:grid-cols-2">
-                    {history.map((entry) => (
-                      <div key={entry.id} className="rounded-xl border border-white/10 bg-slate-950/60 p-4">
-                        <p className="text-sm font-semibold capitalize">{entry.decision}</p>
-                        <p className="mt-1 text-xs text-slate-400">Reviewer: {entry.reviewer?.name || 'N/A'}</p>
-                        <p className="mt-1 text-xs text-slate-400">Step: {entry.step?.name || 'N/A'}</p>
-                        <p className="mt-2 text-sm text-slate-300">{entry.remarks || 'No remarks provided.'}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+      {doc && (
+        <>
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold text-white">{doc.title}</h2>
+              <div className="flex items-center gap-3 mt-2">
+                <StatusBadge status={doc.status} />
+                <span className="text-xs text-slate-500">{doc.document_type?.name || doc.documentType?.name}</span>
               </div>
             </div>
+            <Link to="/approvals" className="text-sm text-slate-400 hover:text-white">← Queue</Link>
+          </div>
+
+          {/* Review actions */}
+          {canReview && (
+            <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-white">Review Actions</h3>
+              <textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={3} placeholder="Optional remarks…"
+                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+              <div className="flex gap-3">
+                <button onClick={() => actionMutation.mutate('approve')} disabled={actionMutation.isPending}
+                  className="px-4 py-2 text-xs font-medium text-emerald-200 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 rounded-lg cursor-pointer">Approve</button>
+                <button onClick={() => actionMutation.mutate('reject')} disabled={actionMutation.isPending}
+                  className="px-4 py-2 text-xs font-medium text-red-200 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 rounded-lg cursor-pointer">Reject</button>
+                <button onClick={() => actionMutation.mutate('request-info')} disabled={actionMutation.isPending}
+                  className="px-4 py-2 text-xs font-medium text-amber-200 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 rounded-lg cursor-pointer">Request Info</button>
+              </div>
+              {actionMsg && <p className="text-xs text-emerald-300">{actionMsg}</p>}
+            </div>
           )}
-        </div>
-      </div>
+
+          {/* Approval History */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3">Approval History</h3>
+            {history.length === 0 && <p className="text-sm text-slate-400">No approval history yet.</p>}
+            {history.length > 0 && (
+              <div className="space-y-2">
+                {history.map((h, i) => (
+                  <div key={h.id || i} className="rounded-lg border border-white/5 bg-slate-950/40 p-4 flex items-start gap-4">
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${h.decision === 'approved' ? 'bg-emerald-400' : h.decision === 'rejected' ? 'bg-red-400' : 'bg-amber-400'}`} />
+                    <div>
+                      <p className="text-sm text-white font-medium capitalize">{h.decision?.replace('_', ' ')}</p>
+                      <p className="text-xs text-slate-400">{h.reviewer?.name} · Step {h.step?.step_order}: {h.step?.name}</p>
+                      {h.remarks && <p className="text-xs text-slate-500 mt-1 italic">"{h.remarks}"</p>}
+                      <p className="text-[10px] text-slate-600 mt-1">{formatDateTime(h.reviewed_at)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
