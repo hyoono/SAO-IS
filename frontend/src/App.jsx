@@ -13,6 +13,7 @@ import AuditLogsPage from './pages/AuditLogsPage.jsx'
 import WorkflowsPage from './pages/WorkflowsPage.jsx'
 import WorkflowDetailPage from './pages/WorkflowDetailPage.jsx'
 import WorkflowBuilderPage from './pages/WorkflowBuilderPage.jsx'
+import WorkflowEditPage from './pages/WorkflowEditPage.jsx'
 import UsersPage from './pages/UsersPage.jsx'
 import DocumentTypesPage from './pages/DocumentTypesPage.jsx'
 import { useAuth } from './hooks/useAuth'
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/workflows" element={<WorkflowsPage />} />
         <Route path="/workflows/new" element={<WorkflowBuilderPage />} />
+        <Route path="/workflows/:id/edit" element={<WorkflowEditPage />} />
         <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
         <Route path="/audit-logs" element={<AuditLogsPage />} />
         <Route path="/admin/users" element={<UsersPage />} />

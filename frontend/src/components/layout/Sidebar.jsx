@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { label: 'Archive', to: '/admin/archive', icon: ArchiveIcon, roles: ['admin', 'staff'] },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onClose }) {
   const { role } = useAuth()
 
   const filteredItems = NAV_ITEMS.filter(item => !item.roles || item.roles.includes(role))
@@ -27,9 +27,9 @@ export default function Sidebar() {
   const adminItems = filteredItems.filter(i => ['/admin/users', '/workflows', '/admin/document-types', '/audit-logs', '/admin/archive'].includes(i.to))
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-slate-950/80 backdrop-blur-xl border-r border-white/5 flex flex-col z-40">
-      {/* Logo */}
-      <div className="h-16 flex items-center px-5 border-b border-white/5">
+    <aside className={`fixed left-0 top-0 bottom-0 w-64 bg-slate-950/80 backdrop-blur-xl border-r border-white/5 flex flex-col z-40 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      {/* Logo + close on mobile */}
+      <div className="h-16 flex items-center justify-between px-5 border-b border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
             <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,10 +41,14 @@ export default function Sidebar() {
             <p className="text-[10px] text-slate-500 uppercase tracking-wider">Student Affairs</p>
           </div>
         </div>
+        {/* Close button — mobile only */}
+        <button onClick={onClose} className="lg:hidden p-1 text-slate-500 hover:text-white cursor-pointer">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto" onClick={onClose}>
         <NavGroup label="Main" items={mainItems} />
         {workflowItems.length > 0 && <NavGroup label="Workflow" items={workflowItems} />}
         {adminItems.length > 0 && <NavGroup label="Administration" items={adminItems} />}

@@ -12,12 +12,13 @@ const PAGE_TITLES = {
   '/notifications': 'Notifications',
   '/admin/users': 'User Management',
   '/workflows': 'Workflows',
+  '/workflows/new': 'Create Workflow',
   '/admin/document-types': 'Document Types',
   '/audit-logs': 'Audit Log',
   '/admin/archive': 'Archive',
 }
 
-export default function Topbar() {
+export default function Topbar({ onMenuToggle }) {
   const { user, logout } = useAuth()
   const location = useLocation()
 
@@ -37,9 +38,15 @@ export default function Topbar() {
   const title = PAGE_TITLES[pathBase] || PAGE_TITLES['/' + location.pathname.split('/')[1]] || 'SAO-IS'
 
   return (
-    <header className="h-16 bg-slate-950/40 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 sticky top-0 z-30">
-      {/* Page title */}
-      <h1 className="text-lg font-semibold text-white">{title}</h1>
+    <header className="h-16 bg-slate-950/40 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
+      <div className="flex items-center gap-3">
+        {/* Hamburger — mobile only */}
+        <button onClick={onMenuToggle} className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg cursor-pointer">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        {/* Page title */}
+        <h1 className="text-lg font-semibold text-white">{title}</h1>
+      </div>
 
       {/* Right side */}
       <div className="flex items-center gap-4">

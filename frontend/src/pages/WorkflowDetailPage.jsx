@@ -20,7 +20,10 @@ export default function WorkflowDetailPage() {
               <h2 className="text-2xl font-semibold text-white">{wf.name}</h2>
               <p className="text-sm text-slate-400 mt-1">{wf.description || 'No description'}</p>
             </div>
-            <Link to="/workflows" className="text-sm text-slate-400 hover:text-white">← Back</Link>
+            <div className="flex items-center gap-3">
+              <Link to={`/workflows/${id}/edit`} className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg">Edit</Link>
+              <Link to="/workflows" className="text-sm text-slate-400 hover:text-white">← Back</Link>
+            </div>
           </div>
 
           {/* Steps timeline */}
