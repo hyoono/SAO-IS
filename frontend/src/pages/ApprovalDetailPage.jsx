@@ -1,16 +1,16 @@
 import { useState, useMemo } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../hooks/useAuth'
 import { useDocument } from '../hooks/useDocuments'
 import * as approvalsApi from '../api/approvals'
+import * as documentsApi from '../api/documents'
 import StatusBadge from '../components/ui/StatusBadge.jsx'
-import { formatDateTime } from '../utils/formatters'
+import { formatDateTime, formatFileSize } from '../utils/formatters'
 
 export default function ApprovalDetailPage() {
   const { id } = useParams()
   const { role } = useAuth()
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [remarks, setRemarks] = useState('')
   const [actionMsg, setActionMsg] = useState('')
@@ -21,9 +21,16 @@ export default function ApprovalDetailPage() {
     queryFn: () => approvalsApi.getApprovalHistory(id).then(r => r.data),
     enabled: !!id,
   })
+  const versionsQuery = useQuery({
+    queryKey: ['document', id, 'versions'],
+    queryFn: () => documentsApi.getVersions(id).then(r => r.data),
+    enabled: !!id,
+  })
 
   const history = useMemo(() => Array.isArray(historyQuery.data) ? historyQuery.data : [], [historyQuery.data])
+  const versions = useMemo(() => Array.isArray(versionsQuery.data) ? versionsQuery.data : [], [versionsQuery.data])
   const doc = documentQuery.data
+  const latestVersion = versions[0]
 
   const doAction = (action) => {
     const fn = action === 'approve' ? approvalsApi.approve
@@ -47,11 +54,12 @@ export default function ApprovalDetailPage() {
   const canReview = doc && ['pending', 'in_review'].includes(doc.status) && ['admin', 'staff', 'faculty'].includes(role)
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
       {documentQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
 
       {doc && (
         <>
+          {/* Header */}
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-white">{doc.title}</h2>
@@ -62,6 +70,56 @@ export default function ApprovalDetailPage() {
             </div>
             <Link to="/approvals" className="text-sm text-slate-400 hover:text-white">← Queue</Link>
           </div>
+
+          {/* Document Info Panel */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Submitter</p>
+              <p className="text-sm text-white mt-1">{doc.submitter?.name || doc.user?.name || '—'}</p>
+            </div>
+            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Current Step</p>
+              <p className="text-sm text-white mt-1">{doc.current_step?.name || doc.currentStep?.name || '—'}</p>
+            </div>
+            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Submitted</p>
+              <p className="text-sm text-white mt-1">{formatDateTime(doc.created_at)}</p>
+            </div>
+            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Expires</p>
+              <p className="text-sm text-white mt-1">{doc.expires_at ? formatDateTime(doc.expires_at) : 'Never'}</p>
+            </div>
+          </div>
+
+          {/* File Preview / Download */}
+          {versions.length > 0 && (
+            <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5">
+              <h3 className="text-sm font-semibold text-white mb-3">Attached Document</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-white">{latestVersion.original_filename}</p>
+                    <p className="text-xs text-slate-500">
+                      Version {latestVersion.version_number} · {formatFileSize(latestVersion.file_size)} · {formatDateTime(latestVersion.created_at)}
+                    </p>
+                  </div>
+                </div>
+                <a href={`/api/v1/documents/${id}/versions/${latestVersion.id}/download`}
+                  className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg"
+                  target="_blank" rel="noopener noreferrer">
+                  Download
+                </a>
+              </div>
+              {versions.length > 1 && (
+                <p className="text-[10px] text-slate-500 mt-3">{versions.length} versions available · <Link to={`/documents/${id}`} className="text-blue-400 hover:text-blue-300">View all →</Link></p>
+              )}
+            </div>
+          )}
 
           {/* Review actions */}
           {canReview && (
