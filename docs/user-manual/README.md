@@ -1,11 +1,21 @@
 # SAO-IS User Manuals
 
-Per-role user guides for the SAO-IS system. One document per role.
+Role-specific guides for using the SAO-IS system.
 
 ## Contents
 
-- `admin.md` — Admin user guide (to be written in Phase 6)
-- `staff.md` — Staff user guide (to be written in Phase 6)
-- `org_officer.md` — Organization officer guide (to be written in Phase 6)
-- `student.md` — Student user guide (to be written in Phase 6)
-- `faculty.md` — Faculty user guide (to be written in Phase 6)
+- [admin.md](./admin.md) — Admin user guide (full system access)
+- [staff.md](./staff.md) — Staff user guide (approvals, doc types, workflows)
+- [student.md](./student.md) — Student user guide (submit, track, respond)
+- [faculty.md](./faculty.md) — Faculty user guide (endorsement workflow)
+- [org_officer.md](./org_officer.md) — Organization officer guide (org document submission)
+
+## Quick Reference
+
+| Role | Can Submit | Can Approve | Can Manage Users | Can Manage Workflows |
+|------|-----------|-------------|-----------------|---------------------|
+| Admin | ✅ | ✅ | ✅ | ✅ |
+| Staff | ✅ | ✅ | ❌ | ✅ |
+| Faculty | ✅ | ✅ (endorse) | ❌ | ❌ |
+| Org Officer | ✅ | ❌ | ❌ | ❌ |
+| Student | ✅ | ❌ | ❌ | ❌ |
