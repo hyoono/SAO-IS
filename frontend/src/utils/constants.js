@@ -7,6 +7,8 @@ export const ROLES = {
   ORG_OFFICER: 'org_officer',
   STUDENT: 'student',
   FACULTY: 'faculty',
+  DIRECTOR: 'director',
+  CENTER_HEAD: 'center_head',
 }
 
 /**
@@ -41,6 +43,8 @@ export const ROLE_LABELS = {
   org_officer: 'Org Officer',
   student: 'Student',
   faculty: 'Faculty',
+  director: 'Director',
+  center_head: 'Center Head',
 }
 
 /**

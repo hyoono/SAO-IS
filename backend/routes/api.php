@@ -3,10 +3,12 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\CenterController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DocumentTypeController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WorkflowController;
 use Illuminate\Support\Facades\Route;
@@ -55,8 +57,8 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     // Dashboard
     Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
-    // ── Users (admin only for list/create, admin+self for show/update) ──
-    Route::middleware('role:admin')->group(function () {
+    // ── Users (admin + director for list/create) ──
+    Route::middleware('role:admin,director')->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
     });
@@ -65,7 +67,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
 
     // ── Document Types ──
     Route::get('/document-types', [DocumentTypeController::class, 'index']);
-    Route::middleware('role:admin,staff')->group(function () {
+    Route::middleware('role:admin,staff,director,center_head')->group(function () {
         Route::post('/document-types', [DocumentTypeController::class, 'store']);
         Route::patch('/document-types/{documentType}', [DocumentTypeController::class, 'update']);
     });
@@ -92,18 +94,35 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 
-    // ── Audit Logs (admin only) ──
-    Route::middleware('role:admin')->group(function () {
+    // ── Audit Logs (admin + director) ──
+    Route::middleware('role:admin,director')->group(function () {
         Route::get('/audit-logs', [AuditLogController::class, 'index']);
         Route::get('/documents/{document}/audit', [AuditLogController::class, 'documentAudit']);
     });
 
-    // ── Workflows (admin + staff) ──
-    Route::middleware('role:admin,staff')->group(function () {
+    // ── Workflows (admin + staff + director + center_head) ──
+    Route::middleware('role:admin,staff,director,center_head')->group(function () {
         Route::get('/workflows', [WorkflowController::class, 'index']);
         Route::post('/workflows', [WorkflowController::class, 'store']);
         Route::get('/workflows/{workflow}', [WorkflowController::class, 'show']);
         Route::put('/workflows/{workflow}', [WorkflowController::class, 'update']);
         Route::get('/workflows/{workflow}/steps', [WorkflowController::class, 'steps']);
+    });
+
+    // ── Centers ──
+    Route::get('/centers', [CenterController::class, 'index']);
+    Route::middleware('role:admin,director')->group(function () {
+        Route::post('/centers', [CenterController::class, 'store']);
+        Route::patch('/centers/{center}', [CenterController::class, 'update']);
+    });
+    Route::middleware('role:admin,director,center_head')->group(function () {
+        Route::get('/centers/{center}/stats', [CenterController::class, 'stats']);
+    });
+
+    // ── Reports ──
+    Route::middleware('role:admin,director,center_head,staff')->group(function () {
+        Route::get('/reports', [ReportController::class, 'index']);
+        Route::post('/reports', [ReportController::class, 'store']);
+        Route::get('/reports/{report}/download', [ReportController::class, 'download']);
     });
 });

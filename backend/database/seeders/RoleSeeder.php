@@ -17,6 +17,8 @@ class RoleSeeder extends Seeder
         'org_officer',
         'student',
         'faculty',
+        'director',
+        'center_head',
     ];
 
     /**

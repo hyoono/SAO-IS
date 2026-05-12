@@ -4,16 +4,18 @@ import { useAuth } from '../../hooks/useAuth'
 const NAV_ITEMS = [
   { label: 'Dashboard', to: '/dashboard', icon: HomeIcon, roles: null },
   { label: 'Documents', to: '/documents', icon: DocIcon, roles: null },
-  { label: 'Submit', to: '/submit', icon: PlusIcon, roles: ['student', 'org_officer', 'faculty', 'admin', 'staff'] },
+  { label: 'Submit', to: '/submit', icon: PlusIcon, roles: ['student', 'org_officer', 'faculty', 'admin', 'staff', 'director', 'center_head'] },
   { label: 'My Submissions', to: '/my-submissions', icon: FolderIcon, roles: ['student', 'org_officer', 'faculty'] },
-  { label: 'Approvals', to: '/approvals', icon: CheckIcon, roles: ['admin', 'staff', 'faculty'] },
+  { label: 'Approvals', to: '/approvals', icon: CheckIcon, roles: ['admin', 'staff', 'faculty', 'director', 'center_head'] },
   { label: 'Notifications', to: '/notifications', icon: BellIcon, roles: null },
   // Admin group
-  { label: 'Users', to: '/admin/users', icon: UsersIcon, roles: ['admin'] },
-  { label: 'Workflows', to: '/workflows', icon: FlowIcon, roles: ['admin', 'staff'] },
-  { label: 'Document Types', to: '/admin/document-types', icon: TypeIcon, roles: ['admin', 'staff'] },
-  { label: 'Audit Log', to: '/audit-logs', icon: LogIcon, roles: ['admin'] },
-  { label: 'Archive', to: '/admin/archive', icon: ArchiveIcon, roles: ['admin', 'staff'] },
+  { label: 'Users', to: '/admin/users', icon: UsersIcon, roles: ['admin', 'director'] },
+  { label: 'Centers', to: '/admin/centers', icon: TypeIcon, roles: ['admin', 'director'] },
+  { label: 'Workflows', to: '/workflows', icon: FlowIcon, roles: ['admin', 'staff', 'director', 'center_head'] },
+  { label: 'Document Types', to: '/admin/document-types', icon: TypeIcon, roles: ['admin', 'staff', 'director', 'center_head'] },
+  { label: 'Reports', to: '/reports', icon: DocIcon, roles: ['admin', 'director', 'center_head', 'staff'] },
+  { label: 'Audit Log', to: '/audit-logs', icon: LogIcon, roles: ['admin', 'director'] },
+  { label: 'Archive', to: '/admin/archive', icon: ArchiveIcon, roles: ['admin', 'staff', 'director'] },
 ]
 
 export default function Sidebar({ mobileOpen, onClose }) {
@@ -24,7 +26,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
   // Split items into groups
   const mainItems = filteredItems.filter(i => ['/dashboard', '/documents', '/submit', '/my-submissions', '/notifications'].includes(i.to))
   const workflowItems = filteredItems.filter(i => ['/approvals'].includes(i.to))
-  const adminItems = filteredItems.filter(i => ['/admin/users', '/workflows', '/admin/document-types', '/audit-logs', '/admin/archive'].includes(i.to))
+  const adminItems = filteredItems.filter(i => ['/admin/users', '/admin/centers', '/workflows', '/admin/document-types', '/reports', '/audit-logs', '/admin/archive'].includes(i.to))
 
   return (
     <aside className={`fixed left-0 top-0 bottom-0 w-64 bg-slate-950/80 backdrop-blur-xl border-r border-white/5 flex flex-col z-40 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>

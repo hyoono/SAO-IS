@@ -6,24 +6,26 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DocumentType extends Model
+class Report extends Model
 {
     use HasFactory, HasUuids;
 
-    public $timestamps = false;
-
     protected $fillable = [
-        'name',
-        'workflow_template_id',
-        'expiry_days',
         'center_id',
+        'title',
+        'file_path',
+        'original_filename',
+        'mime_type',
+        'file_size',
+        'uploaded_by',
+        'report_date',
     ];
 
     protected function casts(): array
     {
         return [
-            'expiry_days' => 'integer',
-            'created_at' => 'datetime',
+            'file_size' => 'integer',
+            'report_date' => 'date',
         ];
     }
 
@@ -34,13 +36,8 @@ class DocumentType extends Model
         return $this->belongsTo(Center::class);
     }
 
-    public function workflowTemplate()
+    public function uploader()
     {
-        return $this->belongsTo(WorkflowTemplate::class, 'workflow_template_id');
-    }
-
-    public function documents()
-    {
-        return $this->hasMany(Document::class, 'document_type_id');
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 }

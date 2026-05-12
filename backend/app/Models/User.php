@@ -20,6 +20,7 @@ class User extends Authenticatable
         'password_hash',
         'ms365_id',
         'role',
+        'center_id',
     ];
 
     /**
@@ -47,6 +48,11 @@ class User extends Authenticatable
     }
 
     // ── Relationships ──
+
+    public function center()
+    {
+        return $this->belongsTo(Center::class);
+    }
 
     public function submittedDocuments()
     {

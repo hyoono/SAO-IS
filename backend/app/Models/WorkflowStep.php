@@ -18,9 +18,15 @@ class WorkflowStep extends Model
         'name',
         'assignee_role',
         'assignee_user_id',
+        'center_id',
     ];
 
     // ── Relationships ──
+
+    public function center()
+    {
+        return $this->belongsTo(Center::class);
+    }
 
     public function template()
     {

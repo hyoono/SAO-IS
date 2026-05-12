@@ -28,12 +28,30 @@ class ApprovalController extends Controller
         $user = $request->user();
 
         $query = Document::query()
-            ->with(['submitter:id,name,email', 'currentStep:id,name,assignee_role,assignee_user_id', 'documentType:id,name'])
+            ->with(['submitter:id,name,email', 'currentStep:id,name,assignee_role,assignee_user_id,center_id', 'documentType:id,name,center_id', 'documentType.center:id,code,name'])
             ->whereIn('status', ['pending', 'in_review'])
             ->whereHas('currentStep', function ($stepQuery) use ($user): void {
                 $stepQuery->where(function ($q) use ($user) {
-                    $q->where('assignee_role', $user->role)
-                      ->orWhere('assignee_user_id', $user->id);
+                    // Direct user assignment
+                    $q->where('assignee_user_id', $user->id);
+
+                    // Role-based matching
+                    $q->orWhere(function ($roleQuery) use ($user) {
+                        $roleQuery->where('assignee_role', $user->role);
+
+                        // Center-scoped: match step's center with user's center
+                        if ($user->center_id) {
+                            $roleQuery->where(function ($centerQ) use ($user) {
+                                $centerQ->where('center_id', $user->center_id)
+                                         ->orWhereNull('center_id');
+                            });
+                        }
+                    });
+
+                    // Director sees all steps assigned to 'director' role
+                    if ($user->role === 'director') {
+                        $q->orWhere('assignee_role', 'director');
+                    }
                 });
             })
             ->latest();
