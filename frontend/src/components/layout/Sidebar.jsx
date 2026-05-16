@@ -23,15 +23,15 @@ export default function Sidebar({ mobileOpen, onClose }) {
 
   const filteredItems = NAV_ITEMS.filter(item => !item.roles || item.roles.includes(role))
 
-  // Split items into groups
   const mainItems = filteredItems.filter(i => ['/dashboard', '/documents', '/submit', '/my-submissions', '/notifications'].includes(i.to))
   const workflowItems = filteredItems.filter(i => ['/approvals'].includes(i.to))
   const adminItems = filteredItems.filter(i => ['/admin/users', '/admin/centers', '/workflows', '/admin/document-types', '/reports', '/audit-logs', '/admin/archive'].includes(i.to))
 
   return (
-    <aside className={`fixed left-0 top-0 bottom-0 w-64 bg-slate-950/80 backdrop-blur-xl border-r border-white/5 flex flex-col z-40 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+    <aside className={`fixed left-0 top-0 bottom-0 w-64 backdrop-blur-xl border-r flex flex-col z-40 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+      style={{ backgroundColor: 'var(--th-sidebar-bg)', borderColor: 'var(--th-border-subtle)' }}>
       {/* Logo + close on mobile */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-white/5">
+      <div className="h-16 flex items-center justify-between px-5 border-b" style={{ borderColor: 'var(--th-border-subtle)' }}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
             <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,12 +39,11 @@ export default function Sidebar({ mobileOpen, onClose }) {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-bold text-white tracking-tight">SAO-IS</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Student Affairs</p>
+            <p className="text-sm font-bold tracking-tight" style={{ color: 'var(--th-text)' }}>SAO-IS</p>
+            <p className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--th-text-muted)' }}>Student Affairs</p>
           </div>
         </div>
-        {/* Close button — mobile only */}
-        <button onClick={onClose} className="lg:hidden p-1 text-slate-500 hover:text-white cursor-pointer">
+        <button onClick={onClose} className="lg:hidden p-1 cursor-pointer" style={{ color: 'var(--th-text-muted)' }}>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
@@ -57,8 +56,8 @@ export default function Sidebar({ mobileOpen, onClose }) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/5">
-        <p className="text-[10px] text-slate-600 text-center">MMCL · SAO-IS v1.0</p>
+      <div className="p-4 border-t" style={{ borderColor: 'var(--th-border-subtle)' }}>
+        <p className="text-[10px] text-center" style={{ color: 'var(--th-text-faint)' }}>MMCL · SAO-IS v1.0</p>
       </div>
     </aside>
   )
@@ -67,18 +66,23 @@ export default function Sidebar({ mobileOpen, onClose }) {
 function NavGroup({ label, items }) {
   return (
     <div className="mb-4">
-      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider px-3 mb-2" style={{ color: 'var(--th-text-muted)' }}>{label}</p>
       {items.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 border ${
               isActive
-                ? 'bg-blue-600/15 text-blue-300 border border-blue-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                ? 'text-blue-500 dark:text-blue-300'
+                : 'border-transparent'
             }`
           }
+          style={({ isActive }) => ({
+            backgroundColor: isActive ? 'var(--th-sidebar-active)' : 'transparent',
+            borderColor: isActive ? 'var(--th-badge-border)' : 'transparent',
+            color: isActive ? undefined : 'var(--th-text-secondary)',
+          })}
         >
           <item.icon className="w-4 h-4 flex-shrink-0" />
           {item.label}

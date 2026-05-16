@@ -38,54 +38,54 @@ export default function WorkflowBuilderPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-white">Create Workflow</h2>
-        <p className="text-sm text-slate-400 mt-1">Define the approval steps for a new workflow template.</p>
+        <h2 className="text-2xl font-semibold text-[var(--th-text)]">Create Workflow</h2>
+        <p className="text-sm text-[var(--th-text-secondary)] mt-1">Define the approval steps for a new workflow template.</p>
       </div>
 
       {error && <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5 space-y-4">
+        <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Workflow Name</label>
+            <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">Workflow Name</label>
             <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Student Clearance Approval"
-              className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+              className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
           </div>
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Description (optional)</label>
+            <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">Description (optional)</label>
             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} placeholder="Describe this workflow…"
-              className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+              className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
           </div>
         </div>
 
         {/* Steps builder */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white">Approval Steps</h3>
+            <h3 className="text-sm font-semibold text-[var(--th-text)]">Approval Steps</h3>
             <button type="button" onClick={addStep}
               className="px-3 py-1.5 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">+ Add Step</button>
           </div>
 
           {steps.map((step, i) => (
-            <div key={i} className="rounded-xl border border-white/10 bg-slate-950/40 p-4 flex gap-4 items-start">
+            <div key={i} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-4 flex gap-4 items-start">
               {/* Step number + reorder */}
               <div className="flex flex-col items-center gap-1 pt-1">
                 <div className="w-7 h-7 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-300">{i + 1}</div>
-                <button type="button" onClick={() => moveStep(i, -1)} disabled={i === 0} className="text-slate-500 hover:text-white disabled:opacity-20 cursor-pointer text-xs">▲</button>
-                <button type="button" onClick={() => moveStep(i, 1)} disabled={i === steps.length - 1} className="text-slate-500 hover:text-white disabled:opacity-20 cursor-pointer text-xs">▼</button>
+                <button type="button" onClick={() => moveStep(i, -1)} disabled={i === 0} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▲</button>
+                <button type="button" onClick={() => moveStep(i, 1)} disabled={i === steps.length - 1} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▼</button>
               </div>
 
               {/* Step fields */}
               <div className="flex-1 grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block text-[10px] text-slate-500 mb-1">Step Name</label>
+                  <label className="block text-[10px] text-[var(--th-text-muted)] mb-1">Step Name</label>
                   <input type="text" value={step.name} onChange={e => updateStep(i, 'name', e.target.value)} required placeholder="e.g. Admin Review"
-                    className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+                    className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-slate-500 mb-1">Assignee Role</label>
+                  <label className="block text-[10px] text-[var(--th-text-muted)] mb-1">Assignee Role</label>
                   <select value={step.assignee_role} onChange={e => updateStep(i, 'assignee_role', e.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40">
+                    className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40">
                     {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
                   </select>
                 </div>
@@ -100,7 +100,7 @@ export default function WorkflowBuilderPage() {
         </div>
 
         <button type="submit" disabled={mutation.isPending}
-          className="px-6 py-2.5 text-sm font-medium text-white bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer disabled:opacity-50">
+          className="px-6 py-2.5 text-sm font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer disabled:opacity-50">
           {mutation.isPending ? 'Creating…' : 'Create Workflow'}
         </button>
       </form>

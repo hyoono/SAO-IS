@@ -13,7 +13,7 @@ export default function AppShell() {
   return (
     <div className="min-h-screen relative">
       {/* Fixed background — avoids mobile repaint glitches */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 -z-10" />
+      <div className="fixed inset-0 -z-10 transition-colors duration-300" style={{ background: `linear-gradient(to bottom right, var(--th-bg-gradient-from), var(--th-bg-gradient-via), var(--th-bg-gradient-to))` }} />
 
       <div className="flex min-h-screen">
         {/* Mobile overlay */}

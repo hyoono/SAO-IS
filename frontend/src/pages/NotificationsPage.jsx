@@ -32,24 +32,24 @@ export default function NotificationsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-5">
       <div>
-        <h2 className="text-2xl font-semibold text-white">Notifications</h2>
-        <p className="text-sm text-slate-400 mt-1">{items.length} notification{items.length !== 1 ? 's' : ''}</p>
+        <h2 className="text-2xl font-semibold text-[var(--th-text)]">Notifications</h2>
+        <p className="text-sm text-[var(--th-text-secondary)] mt-1">{items.length} notification{items.length !== 1 ? 's' : ''}</p>
       </div>
 
       {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
 
       {!isLoading && items.length === 0 && (
-        <div className="py-16 text-center"><p className="text-slate-400">No notifications.</p></div>
+        <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No notifications.</p></div>
       )}
 
       {items.length > 0 && (
         <div className="space-y-2">
           {items.map((n) => (
-            <div key={n.id} className="rounded-lg border border-white/5 bg-slate-950/30 p-4 flex items-start gap-3 transition-colors">
+            <div key={n.id} className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4 flex items-start gap-3 transition-colors">
               <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-slate-600" />
               <div>
-                <p className="text-sm text-white">{n.message}</p>
-                <p className="text-[10px] text-slate-500 mt-1">{formatDateTime(n.created_at)}</p>
+                <p className="text-sm text-[var(--th-text)]">{n.message}</p>
+                <p className="text-[10px] text-[var(--th-text-muted)] mt-1">{formatDateTime(n.created_at)}</p>
                 {n.document_id && <Link to={`/documents/${n.document_id}`} className="text-[10px] text-blue-400 hover:text-blue-300 mt-1 block">View document →</Link>}
               </div>
             </div>

@@ -12,13 +12,13 @@ export default function ForbiddenPage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
         </svg>
       </div>
-      <h2 className="text-3xl font-bold text-white mb-2">403</h2>
-      <p className="text-lg text-slate-300 mb-1">Access Forbidden</p>
-      <p className="text-sm text-slate-500 max-w-md mb-8">
+      <h2 className="text-3xl font-bold text-[var(--th-text)] mb-2">403</h2>
+      <p className="text-lg text-[var(--th-text-secondary)] mb-1">Access Forbidden</p>
+      <p className="text-sm text-[var(--th-text-muted)] max-w-md mb-8">
         You don't have permission to access this page. Contact your administrator if you believe this is an error.
       </p>
       <Link to="/dashboard"
-        className="px-6 py-2.5 text-sm font-medium text-white bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors">
+        className="px-6 py-2.5 text-sm font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors">
         Back to Dashboard
       </Link>
     </div>

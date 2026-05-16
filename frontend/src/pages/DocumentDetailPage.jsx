@@ -55,13 +55,13 @@ export default function DocumentDetailPage() {
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-semibold text-white">{doc.title}</h2>
+              <h2 className="text-2xl font-semibold text-[var(--th-text)]">{doc.title}</h2>
               <div className="flex items-center gap-3 mt-2">
                 <StatusBadge status={doc.status} />
-                <span className="text-xs text-slate-500">{doc.document_type?.name || doc.documentType?.name}</span>
+                <span className="text-xs text-[var(--th-text-muted)]">{doc.document_type?.name || doc.documentType?.name}</span>
               </div>
             </div>
-            <Link to="/documents" className="text-sm text-slate-400 hover:text-white">← Back</Link>
+            <Link to="/documents" className="text-sm text-[var(--th-text-secondary)] hover:text-[var(--th-text)]">← Back</Link>
           </div>
 
           {/* Metadata grid */}
@@ -72,9 +72,9 @@ export default function DocumentDetailPage() {
               { label: 'Created', value: formatDateTime(doc.created_at) },
               { label: 'Expires', value: doc.expires_at ? formatDateTime(doc.expires_at) : 'Never' },
             ].map(({ label, value }) => (
-              <div key={label} className="rounded-xl bg-slate-950/50 border border-white/5 p-4">
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</p>
-                <p className="text-sm text-white mt-1">{value || '—'}</p>
+              <div key={label} className="rounded-xl bg-slate-950/50 border border-[var(--th-border-subtle)] p-4">
+                <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">{label}</p>
+                <p className="text-sm text-[var(--th-text)] mt-1">{value || '—'}</p>
               </div>
             ))}
           </div>
@@ -98,28 +98,28 @@ export default function DocumentDetailPage() {
 
           {/* Versions */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-3">Version History</h3>
+            <h3 className="text-lg font-semibold text-[var(--th-text)] mb-3">Version History</h3>
             {versionsQuery.isLoading && <p className="text-sm text-blue-200/80">Loading…</p>}
-            {versions.length === 0 && !versionsQuery.isLoading && <p className="text-sm text-slate-400">No versions.</p>}
+            {versions.length === 0 && !versionsQuery.isLoading && <p className="text-sm text-[var(--th-text-secondary)]">No versions.</p>}
             {versions.length > 0 && (
-              <div className="rounded-xl border border-white/10 overflow-hidden">
+              <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-950/60 border-b border-white/5">
+                  <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
                     <tr>
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase">Version</th>
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase">Filename</th>
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase">Size</th>
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-400 uppercase">Uploaded</th>
+                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Version</th>
+                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Filename</th>
+                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Size</th>
+                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Uploaded</th>
                       <th className="px-4 py-2.5"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-[var(--th-border-subtle)]">
                     {versions.map((v) => (
                       <tr key={v.id} className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-2.5 text-white font-medium">v{v.version_number}</td>
-                        <td className="px-4 py-2.5 text-slate-400 text-xs">{v.original_filename}</td>
-                        <td className="px-4 py-2.5 text-slate-400 text-xs">{formatFileSize(v.file_size_bytes)}</td>
-                        <td className="px-4 py-2.5 text-slate-400 text-xs">{formatDateTime(v.created_at)}</td>
+                        <td className="px-4 py-2.5 text-[var(--th-text)] font-medium">v{v.version_number}</td>
+                        <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{v.original_filename}</td>
+                        <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{formatFileSize(v.file_size_bytes)}</td>
+                        <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{formatDateTime(v.created_at)}</td>
                         <td className="px-4 py-2.5 text-right">
                           <a href={`/api/v1/documents/${documentId}/versions/${v.id}/download`}
                             className="text-emerald-400 hover:text-emerald-300 text-xs font-medium">Download</a>

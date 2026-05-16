@@ -24,10 +24,10 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/40 overflow-hidden">
+    <div className="rounded-xl border border-[var(--th-border)] bg-slate-950/40 overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-pointer"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--th-text-secondary)] hover:text-[var(--th-text)] transition-colors cursor-pointer"
       >
         <span className="flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,11 +45,11 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Status filter */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Status</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               >
                 <option value="">All statuses</option>
                 {Object.entries(STATUS_LABELS).map(([key, label]) => (
@@ -60,11 +60,11 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
 
             {/* Type filter */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Document Type</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">Document Type</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               >
                 <option value="">All types</option>
                 {documentTypes.map((dt) => (
@@ -75,23 +75,23 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
 
             {/* Date from */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">From</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">From</label>
               <input
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               />
             </div>
 
             {/* Date to */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">To</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1.5">To</label>
               <input
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               />
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
             </button>
             <button
               onClick={handleClear}
-              className="px-4 py-1.5 text-xs font-medium text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              className="px-4 py-1.5 text-xs font-medium text-[var(--th-text-secondary)] hover:text-[var(--th-text)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] rounded-lg transition-colors cursor-pointer"
             >
               Clear
             </button>

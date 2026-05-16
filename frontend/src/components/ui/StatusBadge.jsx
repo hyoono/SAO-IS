@@ -6,7 +6,7 @@ const STATUS_STYLES = {
   approved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
   rejected: 'bg-red-500/10 text-red-400 border-red-500/30',
   awaiting_info: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
-  archived: 'bg-slate-500/10 text-slate-400 border-slate-500/30',
+  archived: 'bg-slate-500/10 text-[var(--th-text-secondary)] border-slate-500/30',
 }
 
 /**

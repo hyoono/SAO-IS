@@ -62,39 +62,39 @@ export default function ApprovalDetailPage() {
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-white">{doc.title}</h2>
+              <h2 className="text-2xl font-semibold text-[var(--th-text)]">{doc.title}</h2>
               <div className="flex items-center gap-3 mt-2">
                 <StatusBadge status={doc.status} />
-                <span className="text-xs text-slate-500">{doc.document_type?.name || doc.documentType?.name}</span>
+                <span className="text-xs text-[var(--th-text-muted)]">{doc.document_type?.name || doc.documentType?.name}</span>
               </div>
             </div>
-            <Link to="/approvals" className="text-sm text-slate-400 hover:text-white">← Queue</Link>
+            <Link to="/approvals" className="text-sm text-[var(--th-text-secondary)] hover:text-[var(--th-text)]">← Queue</Link>
           </div>
 
           {/* Document Info Panel */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Submitter</p>
-              <p className="text-sm text-white mt-1">{doc.submitter?.name || doc.user?.name || '—'}</p>
+            <div className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4">
+              <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">Submitter</p>
+              <p className="text-sm text-[var(--th-text)] mt-1">{doc.submitter?.name || doc.user?.name || '—'}</p>
             </div>
-            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Current Step</p>
-              <p className="text-sm text-white mt-1">{doc.current_step?.name || doc.currentStep?.name || '—'}</p>
+            <div className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4">
+              <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">Current Step</p>
+              <p className="text-sm text-[var(--th-text)] mt-1">{doc.current_step?.name || doc.currentStep?.name || '—'}</p>
             </div>
-            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Submitted</p>
-              <p className="text-sm text-white mt-1">{formatDateTime(doc.created_at)}</p>
+            <div className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4">
+              <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">Submitted</p>
+              <p className="text-sm text-[var(--th-text)] mt-1">{formatDateTime(doc.created_at)}</p>
             </div>
-            <div className="rounded-lg border border-white/5 bg-slate-950/40 p-4">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Expires</p>
-              <p className="text-sm text-white mt-1">{doc.expires_at ? formatDateTime(doc.expires_at) : 'Never'}</p>
+            <div className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4">
+              <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">Expires</p>
+              <p className="text-sm text-[var(--th-text)] mt-1">{doc.expires_at ? formatDateTime(doc.expires_at) : 'Never'}</p>
             </div>
           </div>
 
           {/* File Preview / Download */}
           {versions.length > 0 && (
-            <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">Attached Document</h3>
+            <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5">
+              <h3 className="text-sm font-semibold text-[var(--th-text)] mb-3">Attached Document</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
@@ -103,8 +103,8 @@ export default function ApprovalDetailPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm text-white">{latestVersion.original_filename}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-[var(--th-text)]">{latestVersion.original_filename}</p>
+                    <p className="text-xs text-[var(--th-text-muted)]">
                       Version {latestVersion.version_number} · {formatFileSize(latestVersion.file_size)} · {formatDateTime(latestVersion.created_at)}
                     </p>
                   </div>
@@ -116,17 +116,17 @@ export default function ApprovalDetailPage() {
                 </a>
               </div>
               {versions.length > 1 && (
-                <p className="text-[10px] text-slate-500 mt-3">{versions.length} versions available · <Link to={`/documents/${id}`} className="text-blue-400 hover:text-blue-300">View all →</Link></p>
+                <p className="text-[10px] text-[var(--th-text-muted)] mt-3">{versions.length} versions available · <Link to={`/documents/${id}`} className="text-blue-400 hover:text-blue-300">View all →</Link></p>
               )}
             </div>
           )}
 
           {/* Review actions */}
           {canReview && (
-            <div className="rounded-xl border border-white/10 bg-slate-950/40 p-5 space-y-4">
-              <h3 className="text-sm font-semibold text-white">Review Actions</h3>
+            <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-[var(--th-text)]">Review Actions</h3>
               <textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={3} placeholder="Optional remarks…"
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] placeholder:text-[var(--th-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
               <div className="flex gap-3">
                 <button onClick={() => actionMutation.mutate('approve')} disabled={actionMutation.isPending}
                   className="px-4 py-2 text-xs font-medium text-emerald-200 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 rounded-lg cursor-pointer">Approve</button>
@@ -141,18 +141,18 @@ export default function ApprovalDetailPage() {
 
           {/* Approval History */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-3">Approval History</h3>
-            {history.length === 0 && <p className="text-sm text-slate-400">No approval history yet.</p>}
+            <h3 className="text-lg font-semibold text-[var(--th-text)] mb-3">Approval History</h3>
+            {history.length === 0 && <p className="text-sm text-[var(--th-text-secondary)]">No approval history yet.</p>}
             {history.length > 0 && (
               <div className="space-y-2">
                 {history.map((h, i) => (
-                  <div key={h.id || i} className="rounded-lg border border-white/5 bg-slate-950/40 p-4 flex items-start gap-4">
+                  <div key={h.id || i} className="rounded-lg border border-[var(--th-border-subtle)] bg-[var(--th-surface)] p-4 flex items-start gap-4">
                     <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${h.decision === 'approved' ? 'bg-emerald-400' : h.decision === 'rejected' ? 'bg-red-400' : 'bg-amber-400'}`} />
                     <div>
-                      <p className="text-sm text-white font-medium capitalize">{h.decision?.replace('_', ' ')}</p>
-                      <p className="text-xs text-slate-400">{h.reviewer?.name} · Step {h.step?.step_order}: {h.step?.name}</p>
-                      {h.remarks && <p className="text-xs text-slate-500 mt-1 italic">"{h.remarks}"</p>}
-                      <p className="text-[10px] text-slate-600 mt-1">{formatDateTime(h.reviewed_at)}</p>
+                      <p className="text-sm text-[var(--th-text)] font-medium capitalize">{h.decision?.replace('_', ' ')}</p>
+                      <p className="text-xs text-[var(--th-text-secondary)]">{h.reviewer?.name} · Step {h.step?.step_order}: {h.step?.name}</p>
+                      {h.remarks && <p className="text-xs text-[var(--th-text-muted)] mt-1 italic">"{h.remarks}"</p>}
+                      <p className="text-[10px] text-[var(--th-text-faint)] mt-1">{formatDateTime(h.reviewed_at)}</p>
                     </div>
                   </div>
                 ))}

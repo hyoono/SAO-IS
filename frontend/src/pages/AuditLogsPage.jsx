@@ -17,30 +17,30 @@ export default function AuditLogsPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-5">
       <div>
-        <h2 className="text-2xl font-semibold text-white">Audit Log</h2>
-        <p className="text-sm text-slate-400 mt-1">System-wide activity trail.</p>
+        <h2 className="text-2xl font-semibold text-[var(--th-text)]">Audit Log</h2>
+        <p className="text-sm text-[var(--th-text-secondary)] mt-1">System-wide activity trail.</p>
       </div>
 
       {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
 
       {!isLoading && items.length > 0 && (
-        <div className="rounded-xl border border-white/10 overflow-hidden">
+        <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-slate-950/60 border-b border-white/5">
+            <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
               <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Action</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">User</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Document</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">Time</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Action</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">User</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Document</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[var(--th-border-subtle)]">
               {items.map((log) => (
                 <tr key={log.id} className="hover:bg-white/[0.02]">
-                  <td className="px-4 py-3 text-white font-mono text-xs">{log.action}</td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">{log.user?.name || '—'} <span className="text-slate-600">({log.user?.role})</span></td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">{log.document?.title || '—'}</td>
-                  <td className="px-4 py-3 text-slate-500 text-xs">{formatDateTime(log.created_at)}</td>
+                  <td className="px-4 py-3 text-[var(--th-text)] font-mono text-xs">{log.action}</td>
+                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{log.user?.name || '—'} <span className="text-[var(--th-text-faint)]">({log.user?.role})</span></td>
+                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{log.document?.title || '—'}</td>
+                  <td className="px-4 py-3 text-[var(--th-text-muted)] text-xs">{formatDateTime(log.created_at)}</td>
                 </tr>
               ))}
             </tbody>

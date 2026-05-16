@@ -10,14 +10,14 @@ export default function ConfirmModal({ isOpen, title, message, onConfirm, onCanc
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
 
       {/* Modal */}
-      <div className="relative bg-slate-800 border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+      <div className="relative bg-slate-800 border border-[var(--th-border)] rounded-2xl p-6 max-w-md w-full shadow-2xl">
         <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-        <p className="text-sm text-slate-400 mb-6">{message}</p>
+        <p className="text-sm text-[var(--th-text-secondary)] mb-6">{message}</p>
 
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all cursor-pointer"
+            className="px-4 py-2 text-sm font-medium text-[var(--th-text-secondary)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] border border-[var(--th-border)] rounded-lg transition-all cursor-pointer"
           >
             Cancel
           </button>

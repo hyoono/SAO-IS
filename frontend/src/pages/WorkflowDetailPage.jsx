@@ -17,18 +17,18 @@ export default function WorkflowDetailPage() {
         <>
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-white">{wf.name}</h2>
-              <p className="text-sm text-slate-400 mt-1">{wf.description || 'No description'}</p>
+              <h2 className="text-2xl font-semibold text-[var(--th-text)]">{wf.name}</h2>
+              <p className="text-sm text-[var(--th-text-secondary)] mt-1">{wf.description || 'No description'}</p>
             </div>
             <div className="flex items-center gap-3">
               <Link to={`/workflows/${id}/edit`} className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg">Edit</Link>
-              <Link to="/workflows" className="text-sm text-slate-400 hover:text-white">← Back</Link>
+              <Link to="/workflows" className="text-sm text-[var(--th-text-secondary)] hover:text-[var(--th-text)]">← Back</Link>
             </div>
           </div>
 
           {/* Steps timeline */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Steps ({steps.length})</h3>
+            <h3 className="text-lg font-semibold text-[var(--th-text)] mb-4">Steps ({steps.length})</h3>
             <div className="space-y-0">
               {steps.map((step, i) => (
                 <div key={step.id} className="flex gap-4">
@@ -37,13 +37,13 @@ export default function WorkflowDetailPage() {
                     <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-300 flex-shrink-0">
                       {step.step_order}
                     </div>
-                    {i < steps.length - 1 && <div className="w-px h-full bg-white/10 my-1" />}
+                    {i < steps.length - 1 && <div className="w-px h-full bg-[var(--th-surface-hover)] my-1" />}
                   </div>
                   {/* Step content */}
                   <div className="pb-6">
-                    <p className="text-sm font-medium text-white">{step.name}</p>
-                    <p className="text-xs text-slate-400 mt-1">
-                      Assigned to: <span className="text-slate-300">{ROLE_LABELS[step.assignee_role] || step.assignee_role}</span>
+                    <p className="text-sm font-medium text-[var(--th-text)]">{step.name}</p>
+                    <p className="text-xs text-[var(--th-text-secondary)] mt-1">
+                      Assigned to: <span className="text-[var(--th-text-secondary)]">{ROLE_LABELS[step.assignee_role] || step.assignee_role}</span>
                     </p>
                   </div>
                 </div>

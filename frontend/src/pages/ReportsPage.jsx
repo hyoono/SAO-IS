@@ -67,11 +67,11 @@ export default function ReportsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-white">Reports</h2>
-          <p className="text-sm text-slate-400 mt-1">Center-generated reports and data files.</p>
+          <h2 className="text-2xl font-semibold text-[var(--th-text)]">Reports</h2>
+          <p className="text-sm text-[var(--th-text-secondary)] mt-1">Center-generated reports and data files.</p>
         </div>
         <button onClick={() => { setShowUpload(true); setMsg('') }}
-          className="px-4 py-2 text-xs font-medium text-white bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer">
+          className="px-4 py-2 text-xs font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer">
           + Upload Report
         </button>
       </div>
@@ -81,14 +81,14 @@ export default function ReportsPage() {
       {/* Center Filter */}
       {['admin', 'director'].includes(role) && centers.length > 0 && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">Filter:</span>
+          <span className="text-xs text-[var(--th-text-secondary)]">Filter:</span>
           <button onClick={() => setCenterFilter('')}
-            className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${!centerFilter ? 'bg-blue-600 text-white' : 'bg-white/5 text-slate-400 hover:text-white'}`}>
+            className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${!centerFilter ? 'bg-blue-600 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
             All
           </button>
           {centers.map((c) => (
             <button key={c.id} onClick={() => setCenterFilter(c.id)}
-              className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${centerFilter === c.id ? 'bg-blue-600 text-white' : 'bg-white/5 text-slate-400 hover:text-white'}`}>
+              className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${centerFilter === c.id ? 'bg-blue-600 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
               {c.code}
             </button>
           ))}
@@ -97,19 +97,19 @@ export default function ReportsPage() {
 
       {/* Upload Form */}
       {showUpload && (
-        <form onSubmit={handleSubmit} className="rounded-xl border border-white/10 bg-slate-950/40 p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-white">Upload Report</h3>
+        <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-[var(--th-text)]">Upload Report</h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Title</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1">Title</label>
               <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 placeholder="Report title" required />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Center</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1">Center</label>
               <select value={form.center_id} onChange={(e) => setForm({ ...form, center_id: e.target.value })}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 required>
                 <option value="">Select center…</option>
                 {centers.map((c) => (
@@ -120,23 +120,23 @@ export default function ReportsPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Report Date (optional)</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1">Report Date (optional)</label>
               <input type="date" value={form.report_date} onChange={(e) => setForm({ ...form, report_date: e.target.value })}
-                className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">File</label>
+              <label className="block text-xs text-[var(--th-text-secondary)] mb-1">File</label>
               <input type="file" onChange={(e) => setFile(e.target.files[0])}
-                className="w-full text-sm text-slate-400 file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-blue-500/10 file:text-blue-300 file:cursor-pointer"
+                className="w-full text-sm text-[var(--th-text-secondary)] file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-blue-500/10 file:text-blue-300 file:cursor-pointer"
                 required />
             </div>
           </div>
           <div className="flex gap-3">
             <button type="submit" disabled={uploadMutation.isPending}
-              className="px-4 py-2 text-xs font-medium text-white bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer">
+              className="px-4 py-2 text-xs font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer">
               {uploadMutation.isPending ? 'Uploading…' : 'Upload'}
             </button>
-            <button type="button" onClick={() => setShowUpload(false)} className="px-4 py-2 text-xs text-slate-400 hover:text-white cursor-pointer">
+            <button type="button" onClick={() => setShowUpload(false)} className="px-4 py-2 text-xs text-[var(--th-text-secondary)] hover:text-[var(--th-text)] cursor-pointer">
               Cancel
             </button>
           </div>
@@ -147,13 +147,13 @@ export default function ReportsPage() {
       {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
 
       {!isLoading && reports.length === 0 && (
-        <div className="py-16 text-center"><p className="text-slate-400">No reports uploaded yet.</p></div>
+        <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No reports uploaded yet.</p></div>
       )}
 
       {reports.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-white/10">
+        <div className="overflow-x-auto rounded-xl border border-[var(--th-border)]">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-950/60 text-slate-400 text-xs uppercase tracking-wider">
+            <thead className="bg-[var(--th-surface-alt)] text-[var(--th-text-secondary)] text-xs uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-3">Title</th>
                 <th className="px-4 py-3">Center</th>
@@ -163,20 +163,20 @@ export default function ReportsPage() {
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[var(--th-border-subtle)]">
               {reports.map((r) => (
-                <tr key={r.id} className="hover:bg-white/5 transition-colors">
-                  <td className="px-4 py-3 text-white">{r.title}</td>
+                <tr key={r.id} className="hover:bg-[var(--th-surface-hover)] transition-colors">
+                  <td className="px-4 py-3 text-[var(--th-text)]">{r.title}</td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
                       {r.center?.code}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">
-                    {r.original_filename} <span className="text-slate-600">({formatFileSize(r.file_size)})</span>
+                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">
+                    {r.original_filename} <span className="text-[var(--th-text-faint)]">({formatFileSize(r.file_size)})</span>
                   </td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">{r.report_date || formatDateTime(r.created_at)}</td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">{r.uploader?.name}</td>
+                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{r.report_date || formatDateTime(r.created_at)}</td>
+                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{r.uploader?.name}</td>
                   <td className="px-4 py-3">
                     <button onClick={() => handleDownload(r)} className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">Download</button>
                   </td>

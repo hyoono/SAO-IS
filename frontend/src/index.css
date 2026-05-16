@@ -1,1 +1,64 @@
 @import "tailwindcss";
+
+/* ─── Theme Variables ─── */
+:root {
+  /* Light theme (default) */
+  --th-bg-gradient-from: #f1f5f9;
+  --th-bg-gradient-via: #e0e7ff;
+  --th-bg-gradient-to: #f1f5f9;
+  --th-surface: rgba(255, 255, 255, 0.85);
+  --th-surface-alt: rgba(241, 245, 249, 0.9);
+  --th-surface-hover: rgba(0, 0, 0, 0.04);
+  --th-input-bg: rgba(255, 255, 255, 0.9);
+  --th-text: #0f172a;
+  --th-text-secondary: #475569;
+  --th-text-muted: #94a3b8;
+  --th-text-faint: #cbd5e1;
+  --th-border: rgba(15, 23, 42, 0.12);
+  --th-border-subtle: rgba(15, 23, 42, 0.06);
+  --th-sidebar-bg: rgba(255, 255, 255, 0.92);
+  --th-sidebar-active: rgba(59, 130, 246, 0.1);
+  --th-table-head: rgba(241, 245, 249, 0.95);
+  --th-badge-bg: rgba(59, 130, 246, 0.08);
+  --th-badge-text: #2563eb;
+  --th-badge-border: rgba(59, 130, 246, 0.15);
+  --th-ring-offset: #f1f5f9;
+}
+
+.dark {
+  --th-bg-gradient-from: #0f172a;
+  --th-bg-gradient-via: #172554;
+  --th-bg-gradient-to: #0f172a;
+  --th-surface: rgba(2, 6, 23, 0.4);
+  --th-surface-alt: rgba(2, 6, 23, 0.6);
+  --th-surface-hover: rgba(255, 255, 255, 0.05);
+  --th-input-bg: rgba(2, 6, 23, 0.6);
+  --th-text: #ffffff;
+  --th-text-secondary: #94a3b8;
+  --th-text-muted: #64748b;
+  --th-text-faint: #334155;
+  --th-border: rgba(255, 255, 255, 0.1);
+  --th-border-subtle: rgba(255, 255, 255, 0.05);
+  --th-sidebar-bg: rgba(2, 6, 23, 0.8);
+  --th-sidebar-active: rgba(59, 130, 246, 0.15);
+  --th-table-head: rgba(2, 6, 23, 0.6);
+  --th-badge-bg: rgba(59, 130, 246, 0.1);
+  --th-badge-text: #93c5fd;
+  --th-badge-border: rgba(59, 130, 246, 0.2);
+  --th-ring-offset: #0f172a;
+}
+
+/* ─── Global Transitions ─── */
+html {
+  transition: color-scheme 0.2s;
+}
+
+/* ─── Select / Option styling ─── */
+:root select option {
+  background-color: #fff;
+  color: #0f172a;
+}
+.dark select option {
+  background-color: #0f172a;
+  color: #fff;
+}
