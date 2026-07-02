@@ -33,11 +33,11 @@ export default function DocumentTypesPage() {
           <p className="text-sm text-[var(--th-text-secondary)] mt-1">Configure document categories and their workflow assignments.</p>
         </div>
         <button onClick={() => { setShowForm(!showForm); setEditing(null); setForm({ name: '', workflow_template_id: '', expiry_days: '' }); setMsg('') }}
-          className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">
+          className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg cursor-pointer">
           {showForm ? 'Cancel' : '+ New Type'}
         </button>
       </div>
-      {msg && <div className="rounded-lg border border-blue-400/20 bg-blue-500/5 px-4 py-3 text-sm text-blue-200">{msg}</div>}
+      {msg && <div className="rounded-lg border border-[var(--th-msg-info-border)] bg-[var(--th-msg-info-bg)] px-4 py-3 text-sm text-[var(--th-btn-primary-text)]">{msg}</div>}
       {(showForm || editing) && (
         <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
           <h3 className="text-sm font-semibold text-[var(--th-text)]">{editing ? `Edit: ${editing.name}` : 'New Document Type'}</h3>
@@ -61,7 +61,7 @@ export default function DocumentTypesPage() {
           <button type="submit" disabled={createMut.isPending || updateMut.isPending} className="px-5 py-2 text-xs font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer disabled:opacity-50">{editing ? 'Save' : 'Create'}</button>
         </form>
       )}
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
       {!isLoading && items.length === 0 && <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No document types.</p></div>}
       {items.length > 0 && (
         <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
@@ -76,11 +76,11 @@ export default function DocumentTypesPage() {
             </thead>
             <tbody className="divide-y divide-[var(--th-border-subtle)]">
               {items.map(dt => (
-                <tr key={dt.id} className="hover:bg-white/[0.02]">
+                <tr key={dt.id} className="hover:bg-[var(--th-surface-hover)]">
                   <td className="px-4 py-3 text-[var(--th-text)] font-medium">{dt.name}</td>
                   <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{dt.workflow_template?.name || '—'}</td>
                   <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{dt.expiry_days ? `${dt.expiry_days} days` : 'Never'}</td>
-                  <td className="px-4 py-3 text-right"><button onClick={() => openEdit(dt)} className="text-blue-400 hover:text-blue-300 text-xs font-medium cursor-pointer">Edit</button></td>
+                  <td className="px-4 py-3 text-right"><button onClick={() => openEdit(dt)} className="text-[var(--th-link)] hover:text-[var(--th-link-hover)] text-xs font-medium cursor-pointer">Edit</button></td>
                 </tr>
               ))}
             </tbody>

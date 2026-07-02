@@ -136,20 +136,20 @@ function resolveModulePath(role, title) {
 
 function ModuleCard({ title, detail, path }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/60 p-4">
-      <p className="text-sm font-semibold text-white">{title}</p>
-      <p className="mt-2 text-sm text-slate-300">{detail}</p>
+    <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-card-bg)] p-4">
+      <p className="text-sm font-semibold text-[var(--th-text)]">{title}</p>
+      <p className="mt-2 text-sm text-[var(--th-text-secondary)]">{detail}</p>
       {path ? (
         <Link
           to={path}
-          className="mt-4 inline-flex items-center rounded-lg border border-emerald-400/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-500/20"
+          className="mt-4 inline-flex items-center rounded-lg border border-[var(--th-btn-success-border)] bg-[var(--th-btn-success-bg)] px-3 py-1.5 text-xs font-medium text-[var(--th-btn-success-text)] hover:bg-[var(--th-btn-success-hover)]"
         >
           Open module
         </Link>
       ) : (
         <button
           type="button"
-          className="mt-4 inline-flex items-center rounded-lg border border-blue-400/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200"
+          className="mt-4 inline-flex items-center rounded-lg border border-[var(--th-btn-primary-border)] bg-[var(--th-btn-primary-bg)] px-3 py-1.5 text-xs font-medium text-[var(--th-btn-primary-text)]"
         >
           Coming soon in Phase 2
         </button>
@@ -176,17 +176,17 @@ export default function RoleDashboardModules({ role }) {
     : moduleConfig.cards
 
   return (
-    <section className="mt-8 rounded-2xl border border-blue-400/20 bg-blue-500/5 p-5">
-      <p className="text-xs uppercase tracking-[0.2em] text-blue-300/70">Role Modules</p>
-      <h2 className="mt-2 text-xl font-semibold text-white">{moduleConfig.header}</h2>
-      <p className="mt-1 text-sm text-blue-100/80">{moduleConfig.description}</p>
+    <section className="mt-8 rounded-2xl border border-[var(--th-section-border)] bg-[var(--th-section-bg)] p-5">
+      <p className="text-xs uppercase tracking-[0.2em] text-[var(--th-section-label)]">Role Modules</p>
+      <h2 className="mt-2 text-xl font-semibold text-[var(--th-text)]">{moduleConfig.header}</h2>
+      <p className="mt-1 text-sm text-[var(--th-section-desc)]">{moduleConfig.description}</p>
 
       {isLoading && (
-        <p className="mt-4 text-sm text-blue-200/80">Loading live dashboard metrics...</p>
+        <p className="mt-4 text-sm text-[var(--th-loading-text)]">Loading live dashboard metrics...</p>
       )}
 
       {isError && (
-        <p className="mt-4 text-sm text-amber-200/90">Live metrics unavailable. Showing static role modules.</p>
+        <p className="mt-4 text-sm text-[var(--th-btn-warning-text)]">Live metrics unavailable. Showing static role modules.</p>
       )}
 
       <div className="mt-5 grid gap-4 md:grid-cols-3">

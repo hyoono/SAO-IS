@@ -50,7 +50,7 @@ export default function WorkflowEditPage() {
     mutation.mutate({ name, description: description || null, steps })
   }
 
-  if (workflowQuery.isLoading) return <div className="max-w-3xl mx-auto py-8"><p className="text-sm text-blue-200/80 text-center">Loading…</p></div>
+  if (workflowQuery.isLoading) return <div className="max-w-3xl mx-auto py-8"><p className="text-sm text-[var(--th-loading-text)] text-center">Loading…</p></div>
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -62,7 +62,7 @@ export default function WorkflowEditPage() {
         <button onClick={() => navigate(`/workflows/${id}`)} className="text-sm text-[var(--th-text-secondary)] hover:text-[var(--th-text)] cursor-pointer">← Back</button>
       </div>
 
-      {error && <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
+      {error && <div className="rounded-lg border border-[var(--th-msg-error-border)] bg-[var(--th-msg-error-bg)] px-4 py-3 text-sm text-[var(--th-btn-danger-text)]">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
@@ -81,12 +81,12 @@ export default function WorkflowEditPage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[var(--th-text)]">Steps</h3>
-            <button type="button" onClick={addStep} className="px-3 py-1.5 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">+ Add</button>
+            <button type="button" onClick={addStep} className="px-3 py-1.5 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg cursor-pointer">+ Add</button>
           </div>
           {steps.map((step, i) => (
             <div key={i} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-4 flex gap-4 items-start">
               <div className="flex flex-col items-center gap-1 pt-1">
-                <div className="w-7 h-7 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-300">{i + 1}</div>
+                <div className="w-7 h-7 rounded-full bg-[var(--th-step-num-bg)] border border-[var(--th-step-num-border)] flex items-center justify-center text-xs font-bold text-[var(--th-step-num-text)]">{i + 1}</div>
                 <button type="button" onClick={() => moveStep(i, -1)} disabled={i === 0} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▲</button>
                 <button type="button" onClick={() => moveStep(i, 1)} disabled={i === steps.length - 1} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▼</button>
               </div>

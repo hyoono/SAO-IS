@@ -5,7 +5,7 @@ import { ROLE_LABELS } from '../utils/constants'
 import Pagination from '../components/ui/Pagination.jsx'
 import { formatDateTime } from '../utils/formatters'
 
-const ROLES = ['admin', 'staff', 'org_officer', 'student', 'faculty']
+const ROLES = Object.keys(ROLE_LABELS)
 
 export default function UsersPage() {
   const queryClient = useQueryClient()
@@ -79,12 +79,12 @@ export default function UsersPage() {
           <p className="text-sm text-[var(--th-text-secondary)] mt-1">Create and manage user accounts.</p>
         </div>
         <button onClick={() => { setShowCreate(!showCreate); setEditingUser(null); resetForm(); setMsg('') }}
-          className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">
+          className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg cursor-pointer">
           {showCreate ? 'Cancel' : '+ New User'}
         </button>
       </div>
 
-      {msg && <div className="rounded-lg border border-blue-400/20 bg-blue-500/5 px-4 py-3 text-sm text-blue-200">{msg}</div>}
+      {msg && <div className="rounded-lg border border-[var(--th-msg-info-border)] bg-[var(--th-msg-info-bg)] px-4 py-3 text-sm text-[var(--th-btn-primary-text)]">{msg}</div>}
 
       {/* Create / Edit form */}
       {(showCreate || editingUser) && (
@@ -128,51 +128,75 @@ export default function UsersPage() {
       <div className="flex items-center gap-2">
         <span className="text-xs text-[var(--th-text-muted)]">Filter:</span>
         <button onClick={() => { setRoleFilter(''); setPage(1) }}
-          className={`px-3 py-1 text-xs rounded-lg cursor-pointer ${!roleFilter ? 'bg-blue-600/80 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:bg-[var(--th-surface-hover)]'}`}>All</button>
+          className={`px-3 py-1 text-xs rounded-lg cursor-pointer ${!roleFilter ? 'bg-blue-600/80 text-[var(--th-text)]' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:bg-[var(--th-surface-hover)]'}`}>All</button>
         {ROLES.map(r => (
           <button key={r} onClick={() => { setRoleFilter(r); setPage(1) }}
-            className={`px-3 py-1 text-xs rounded-lg cursor-pointer ${roleFilter === r ? 'bg-blue-600/80 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:bg-[var(--th-surface-hover)]'}`}>
+            className={`px-3 py-1 text-xs rounded-lg cursor-pointer ${roleFilter === r ? 'bg-blue-600/80 text-[var(--th-text)]' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:bg-[var(--th-surface-hover)]'}`}>
             {ROLE_LABELS[r]}
           </button>
         ))}
       </div>
 
       {/* Users table */}
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!isLoading && items.length === 0 && <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No users found.</p></div>}
 
       {items.length > 0 && (
-        <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
-              <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Name</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Email</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Role</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Created</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--th-border-subtle)]">
-              {items.map((u) => (
-                <tr key={u.id} className="hover:bg-white/[0.02]">
-                  <td className="px-4 py-3 text-[var(--th-text)] font-medium">{u.name}</td>
-                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{u.email}</td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-blue-500/10 text-blue-300 border border-blue-500/20">
-                      {ROLE_LABELS[u.role] || u.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-[var(--th-text-muted)] text-xs">{formatDateTime(u.created_at)}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button onClick={() => openEdit(u)} className="text-blue-400 hover:text-blue-300 text-xs font-medium cursor-pointer">Edit</button>
-                  </td>
+        <>
+          {/* Mobile card layout */}
+          <div className="md:hidden space-y-3">
+            {items.map((u) => (
+              <div key={u.id} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-[var(--th-text)]">{u.name}</p>
+                    <p className="text-xs text-[var(--th-text-muted)] mt-0.5 truncate">{u.email}</p>
+                  </div>
+                  <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[var(--th-badge-bg)] text-[var(--th-badge-text)] border border-[var(--th-badge-border)] flex-shrink-0">
+                    {ROLE_LABELS[u.role] || u.role}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-xs text-[var(--th-text-muted)]">{formatDateTime(u.created_at)}</span>
+                  <button onClick={() => openEdit(u)} className="text-[var(--th-link)] hover:text-[var(--th-link-hover)] text-xs font-medium cursor-pointer">Edit</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table layout */}
+          <div className="hidden md:block rounded-xl border border-[var(--th-border)] overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Name</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Email</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Role</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Created</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[var(--th-border-subtle)]">
+                {items.map((u) => (
+                  <tr key={u.id} className="hover:bg-[var(--th-surface-hover)]">
+                    <td className="px-4 py-3 text-[var(--th-text)] font-medium">{u.name}</td>
+                    <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{u.email}</td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-[var(--th-badge-bg)] text-[var(--th-badge-text)] border border-[var(--th-badge-border)]">
+                        {ROLE_LABELS[u.role] || u.role}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[var(--th-text-muted)] text-xs">{formatDateTime(u.created_at)}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button onClick={() => openEdit(u)} className="text-[var(--th-link)] hover:text-[var(--th-link-hover)] text-xs font-medium cursor-pointer">Edit</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {data && <Pagination currentPage={data.current_page} lastPage={data.last_page} onPageChange={setPage} />}

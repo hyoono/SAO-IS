@@ -11,7 +11,7 @@ export default function ConfirmModal({ isOpen, title, message, onConfirm, onCanc
 
       {/* Modal */}
       <div className="relative bg-slate-800 border border-[var(--th-border)] rounded-2xl p-6 max-w-md w-full shadow-2xl">
-        <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+        <h3 className="text-lg font-semibold text-[var(--th-text)] mb-2">{title}</h3>
         <p className="text-sm text-[var(--th-text-secondary)] mb-6">{message}</p>
 
         <div className="flex gap-3 justify-end">
@@ -23,7 +23,7 @@ export default function ConfirmModal({ isOpen, title, message, onConfirm, onCanc
           </button>
           <button
             onClick={onConfirm}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-all cursor-pointer ${
+            className={`px-4 py-2 text-sm font-medium text-[var(--th-text)] rounded-lg transition-all cursor-pointer ${
               danger
                 ? 'bg-red-600 hover:bg-red-500'
                 : 'bg-blue-600 hover:bg-blue-500'

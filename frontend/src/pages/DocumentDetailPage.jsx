@@ -24,7 +24,7 @@ export default function DocumentDetailPage() {
 
   const uploadVersionMutation = useMutation({
     mutationFn: (formData) => documentsApi.uploadVersion(documentId, formData),
-    onSuccess: () => { setUploadMsg('Version uploaded!'); queryClient.invalidateQueries({ queryKey: ['document', documentId, 'versions'] }) },
+    onSuccess: () => { setUploadMsg('Version uploaded!'); queryClient.invalidateQueries({ queryKey: ['document', documentId, 'versions'] }); queryClient.invalidateQueries({ queryKey: ['document', documentId] }); queryClient.invalidateQueries({ queryKey: ['documents'] }) },
     onError: () => setUploadMsg('Upload failed.'),
   })
 
@@ -47,8 +47,8 @@ export default function DocumentDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {documentQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading document…</p>}
-      {documentQuery.isError && <p className="text-sm text-red-300 py-8 text-center">Failed to load document.</p>}
+      {documentQuery.isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading document…</p>}
+      {documentQuery.isError && <p className="text-sm text-[var(--th-btn-danger-text)] py-8 text-center">Failed to load document.</p>}
 
       {doc && (
         <>
@@ -72,7 +72,7 @@ export default function DocumentDetailPage() {
               { label: 'Created', value: formatDateTime(doc.created_at) },
               { label: 'Expires', value: doc.expires_at ? formatDateTime(doc.expires_at) : 'Never' },
             ].map(({ label, value }) => (
-              <div key={label} className="rounded-xl bg-slate-950/50 border border-[var(--th-border-subtle)] p-4">
+              <div key={label} className="rounded-xl bg-[var(--th-card-bg)] border border-[var(--th-border-subtle)] p-4">
                 <p className="text-[10px] text-[var(--th-text-muted)] uppercase tracking-wider">{label}</p>
                 <p className="text-sm text-[var(--th-text)] mt-1">{value || '—'}</p>
               </div>
@@ -83,23 +83,23 @@ export default function DocumentDetailPage() {
           <div className="flex items-center gap-3 flex-wrap">
             {canArchive && doc.status !== 'archived' && (
               <button onClick={() => archiveMutation.mutate()} disabled={archiveMutation.isPending}
-                className="px-4 py-2 text-xs font-medium text-amber-200 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 rounded-lg cursor-pointer disabled:opacity-50">
+                className="px-4 py-2 text-xs font-medium text-[var(--th-btn-warning-text)] bg-[var(--th-btn-warning-bg)] border border-[var(--th-btn-warning-border)] hover:bg-[var(--th-btn-warning-hover)] rounded-lg cursor-pointer disabled:opacity-50">
                 {archiveMutation.isPending ? 'Archiving…' : 'Archive'}
               </button>
             )}
             {canUpload && (
-              <label className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">
+              <label className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg cursor-pointer">
                 Upload new version
                 <input type="file" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png" onChange={handleUpload} className="hidden" />
               </label>
             )}
-            {uploadMsg && <span className="text-xs text-emerald-300">{uploadMsg}</span>}
+            {uploadMsg && <span className="text-xs text-[var(--th-btn-success-text)]">{uploadMsg}</span>}
           </div>
 
           {/* Versions */}
           <div>
             <h3 className="text-lg font-semibold text-[var(--th-text)] mb-3">Version History</h3>
-            {versionsQuery.isLoading && <p className="text-sm text-blue-200/80">Loading…</p>}
+            {versionsQuery.isLoading && <p className="text-sm text-[var(--th-loading-text)]">Loading…</p>}
             {versions.length === 0 && !versionsQuery.isLoading && <p className="text-sm text-[var(--th-text-secondary)]">No versions.</p>}
             {versions.length > 0 && (
               <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
@@ -115,14 +115,14 @@ export default function DocumentDetailPage() {
                   </thead>
                   <tbody className="divide-y divide-[var(--th-border-subtle)]">
                     {versions.map((v) => (
-                      <tr key={v.id} className="hover:bg-white/[0.02]">
+                      <tr key={v.id} className="hover:bg-[var(--th-surface-hover)]">
                         <td className="px-4 py-2.5 text-[var(--th-text)] font-medium">v{v.version_number}</td>
                         <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{v.original_filename}</td>
                         <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{formatFileSize(v.file_size_bytes)}</td>
                         <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{formatDateTime(v.created_at)}</td>
                         <td className="px-4 py-2.5 text-right">
                           <a href={`/api/v1/documents/${documentId}/versions/${v.id}/download`}
-                            className="text-emerald-400 hover:text-emerald-300 text-xs font-medium">Download</a>
+                            className="text-emerald-400 hover:text-[var(--th-btn-success-text)] text-xs font-medium">Download</a>
                         </td>
                       </tr>
                     ))}

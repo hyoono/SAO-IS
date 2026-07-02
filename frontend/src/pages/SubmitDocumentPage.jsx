@@ -42,10 +42,10 @@ export default function SubmitDocumentPage() {
       <p className="text-sm text-[var(--th-text-secondary)] mt-1 mb-6">Upload a new document to start workflow processing.</p>
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>
+        <div className="mb-4 rounded-lg border border-[var(--th-msg-error-border)] bg-[var(--th-msg-error-bg)] px-4 py-3 text-sm text-[var(--th-btn-danger-text)]">{error}</div>
       )}
 
-      {dtQuery.isLoading && <p className="text-sm text-blue-200/80">Loading document types…</p>}
+      {dtQuery.isLoading && <p className="text-sm text-[var(--th-loading-text)]">Loading document types…</p>}
 
       {!dtQuery.isLoading && documentTypes.length > 0 && (
         <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-6">

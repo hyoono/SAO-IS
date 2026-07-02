@@ -42,7 +42,7 @@ export default function WorkflowBuilderPage() {
         <p className="text-sm text-[var(--th-text-secondary)] mt-1">Define the approval steps for a new workflow template.</p>
       </div>
 
-      {error && <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
+      {error && <div className="rounded-lg border border-[var(--th-msg-error-border)] bg-[var(--th-msg-error-bg)] px-4 py-3 text-sm text-[var(--th-btn-danger-text)]">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-5 space-y-4">
@@ -63,14 +63,14 @@ export default function WorkflowBuilderPage() {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[var(--th-text)]">Approval Steps</h3>
             <button type="button" onClick={addStep}
-              className="px-3 py-1.5 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg cursor-pointer">+ Add Step</button>
+              className="px-3 py-1.5 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg cursor-pointer">+ Add Step</button>
           </div>
 
           {steps.map((step, i) => (
             <div key={i} className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-4 flex gap-4 items-start">
               {/* Step number + reorder */}
               <div className="flex flex-col items-center gap-1 pt-1">
-                <div className="w-7 h-7 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-300">{i + 1}</div>
+                <div className="w-7 h-7 rounded-full bg-[var(--th-step-num-bg)] border border-[var(--th-step-num-border)] flex items-center justify-center text-xs font-bold text-[var(--th-step-num-text)]">{i + 1}</div>
                 <button type="button" onClick={() => moveStep(i, -1)} disabled={i === 0} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▲</button>
                 <button type="button" onClick={() => moveStep(i, 1)} disabled={i === steps.length - 1} className="text-[var(--th-text-muted)] hover:text-[var(--th-text)] disabled:opacity-20 cursor-pointer text-xs">▼</button>
               </div>

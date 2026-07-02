@@ -67,7 +67,7 @@ export default function DocumentsPage({ myOnly = false, archived = false }) {
       {!archived && <FilterPanel documentTypes={docTypes} onFilter={handleFilter} />}
 
       {/* Content */}
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!isLoading && items.length === 0 && (
         <div className="py-16 text-center">
@@ -76,34 +76,57 @@ export default function DocumentsPage({ myOnly = false, archived = false }) {
       )}
 
       {!isLoading && items.length > 0 && (
-        <div className="rounded-xl border border-[var(--th-border)] overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
-              <tr>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Title</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Type</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Status</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Submitter</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Current Step</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--th-border-subtle)]">
-              {items.map((doc) => (
-                <tr key={doc.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="px-4 py-3 text-[var(--th-text)] font-medium">{doc.title}</td>
-                  <td className="px-4 py-3 text-[var(--th-text-secondary)]">{doc.document_type?.name || doc.documentType?.name || '—'}</td>
-                  <td className="px-4 py-3"><StatusBadge status={doc.status} /></td>
-                  <td className="px-4 py-3 text-[var(--th-text-secondary)]">{doc.submitter?.name || '—'}</td>
-                  <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{doc.current_step?.name || doc.currentStep?.name || '—'}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link to={`/documents/${doc.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">View →</Link>
-                  </td>
+        <>
+          {/* Mobile card layout */}
+          <div className="md:hidden space-y-3">
+            {items.map((doc) => (
+              <Link key={doc.id} to={`/documents/${doc.id}`}
+                className="block rounded-xl border border-[var(--th-border)] bg-[var(--th-surface)] p-4 hover:bg-[var(--th-surface-hover)] transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-[var(--th-text)] truncate">{doc.title}</p>
+                    <p className="text-xs text-[var(--th-text-muted)] mt-1">{doc.document_type?.name || doc.documentType?.name || '—'}</p>
+                  </div>
+                  <StatusBadge status={doc.status} />
+                </div>
+                <div className="flex items-center justify-between mt-3 text-xs text-[var(--th-text-secondary)]">
+                  <span>{doc.submitter?.name || '—'}</span>
+                  <span>{doc.current_step?.name || doc.currentStep?.name || '—'}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop table layout */}
+          <div className="hidden md:block rounded-xl border border-[var(--th-border)] overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-[var(--th-surface-alt)] border-b border-[var(--th-border-subtle)]">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Title</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Type</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Submitter</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-[var(--th-text-secondary)] uppercase">Current Step</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[var(--th-border-subtle)]">
+                {items.map((doc) => (
+                  <tr key={doc.id} className="hover:bg-[var(--th-surface-hover)] transition-colors">
+                    <td className="px-4 py-3 text-[var(--th-text)] font-medium">{doc.title}</td>
+                    <td className="px-4 py-3 text-[var(--th-text-secondary)]">{doc.document_type?.name || doc.documentType?.name || '—'}</td>
+                    <td className="px-4 py-3"><StatusBadge status={doc.status} /></td>
+                    <td className="px-4 py-3 text-[var(--th-text-secondary)]">{doc.submitter?.name || '—'}</td>
+                    <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{doc.current_step?.name || doc.currentStep?.name || '—'}</td>
+                    <td className="px-4 py-3 text-right">
+                      <Link to={`/documents/${doc.id}`} className="text-[var(--th-link)] hover:text-[var(--th-link-hover)] text-xs font-medium">View →</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {/* Pagination */}

@@ -76,19 +76,19 @@ export default function ReportsPage() {
         </button>
       </div>
 
-      {msg && <p className="text-xs text-emerald-300">{msg}</p>}
+      {msg && <p className="text-xs text-[var(--th-btn-success-text)]">{msg}</p>}
 
       {/* Center Filter */}
       {['admin', 'director'].includes(role) && centers.length > 0 && (
         <div className="flex items-center gap-2">
           <span className="text-xs text-[var(--th-text-secondary)]">Filter:</span>
           <button onClick={() => setCenterFilter('')}
-            className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${!centerFilter ? 'bg-blue-600 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
+            className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${!centerFilter ? 'bg-blue-600 text-[var(--th-text)]' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
             All
           </button>
           {centers.map((c) => (
             <button key={c.id} onClick={() => setCenterFilter(c.id)}
-              className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${centerFilter === c.id ? 'bg-blue-600 text-white' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
+              className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${centerFilter === c.id ? 'bg-blue-600 text-[var(--th-text)]' : 'bg-[var(--th-surface)] text-[var(--th-text-secondary)] hover:text-[var(--th-text)]'}`}>
               {c.code}
             </button>
           ))}
@@ -127,7 +127,7 @@ export default function ReportsPage() {
             <div>
               <label className="block text-xs text-[var(--th-text-secondary)] mb-1">File</label>
               <input type="file" onChange={(e) => setFile(e.target.files[0])}
-                className="w-full text-sm text-[var(--th-text-secondary)] file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-blue-500/10 file:text-blue-300 file:cursor-pointer"
+                className="w-full text-sm text-[var(--th-text-secondary)] file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-[var(--th-btn-primary-bg)] file:text-[var(--th-btn-primary-text)] file:cursor-pointer"
                 required />
             </div>
           </div>
@@ -144,7 +144,7 @@ export default function ReportsPage() {
       )}
 
       {/* Reports Table */}
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!isLoading && reports.length === 0 && (
         <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No reports uploaded yet.</p></div>
@@ -168,7 +168,7 @@ export default function ReportsPage() {
                 <tr key={r.id} className="hover:bg-[var(--th-surface-hover)] transition-colors">
                   <td className="px-4 py-3 text-[var(--th-text)]">{r.title}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--th-badge-bg)] text-[var(--th-badge-text)] border border-[var(--th-badge-border)]">
                       {r.center?.code}
                     </span>
                   </td>
@@ -178,7 +178,7 @@ export default function ReportsPage() {
                   <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{r.report_date || formatDateTime(r.created_at)}</td>
                   <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs">{r.uploader?.name}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => handleDownload(r)} className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">Download</button>
+                    <button onClick={() => handleDownload(r)} className="text-xs text-[var(--th-link)] hover:text-[var(--th-link-hover)] cursor-pointer">Download</button>
                   </td>
                 </tr>
               ))}

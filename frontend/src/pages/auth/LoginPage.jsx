@@ -62,7 +62,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-[var(--th-text)] tracking-tight">SAO-IS</h1>
-          <p className="text-sm text-blue-300/70 mt-1">Student Affairs Office Information System</p>
+          <p className="text-sm text-[var(--th-section-label)] mt-1">Student Affairs Office Information System</p>
         </div>
 
         {/* Login Card */}
@@ -70,7 +70,7 @@ export default function LoginPage() {
           <h2 className="text-lg font-semibold text-[var(--th-text)] mb-6">Sign in to your account</h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-300 text-sm">
+            <div className="mb-4 p-3 bg-[var(--th-msg-error-bg)] border border-[var(--th-msg-error-border)] rounded-lg text-[var(--th-btn-danger-text)] text-sm">
               {error}
             </div>
           )}

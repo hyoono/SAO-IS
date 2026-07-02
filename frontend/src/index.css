@@ -23,6 +23,42 @@
   --th-badge-text: #2563eb;
   --th-badge-border: rgba(59, 130, 246, 0.15);
   --th-ring-offset: #f1f5f9;
+
+  /* Action / semantic colors — light mode */
+  --th-btn-primary-text: #1d4ed8;
+  --th-btn-primary-bg: rgba(59, 130, 246, 0.1);
+  --th-btn-primary-border: rgba(59, 130, 246, 0.25);
+  --th-btn-primary-hover: rgba(59, 130, 246, 0.18);
+  --th-btn-success-text: #059669;
+  --th-btn-success-bg: rgba(16, 185, 129, 0.1);
+  --th-btn-success-border: rgba(16, 185, 129, 0.25);
+  --th-btn-success-hover: rgba(16, 185, 129, 0.18);
+  --th-btn-danger-text: #dc2626;
+  --th-btn-danger-bg: rgba(239, 68, 68, 0.1);
+  --th-btn-danger-border: rgba(239, 68, 68, 0.25);
+  --th-btn-danger-hover: rgba(239, 68, 68, 0.18);
+  --th-btn-warning-text: #d97706;
+  --th-btn-warning-bg: rgba(245, 158, 11, 0.1);
+  --th-btn-warning-border: rgba(245, 158, 11, 0.25);
+  --th-btn-warning-hover: rgba(245, 158, 11, 0.18);
+  --th-loading-text: #6366f1;
+  --th-link: #2563eb;
+  --th-link-hover: #1d4ed8;
+  --th-card-bg: rgba(241, 245, 249, 0.7);
+  --th-section-bg: rgba(59, 130, 246, 0.04);
+  --th-section-border: rgba(59, 130, 246, 0.12);
+  --th-section-header: #1e40af;
+  --th-section-desc: #3b82f6;
+  --th-section-label: rgba(37, 99, 235, 0.6);
+  --th-msg-info-bg: rgba(59, 130, 246, 0.06);
+  --th-msg-info-border: rgba(59, 130, 246, 0.15);
+  --th-msg-info-text: #1d4ed8;
+  --th-msg-error-bg: rgba(239, 68, 68, 0.06);
+  --th-msg-error-border: rgba(239, 68, 68, 0.2);
+  --th-msg-error-text: #dc2626;
+  --th-step-num-bg: rgba(59, 130, 246, 0.12);
+  --th-step-num-border: rgba(59, 130, 246, 0.25);
+  --th-step-num-text: #1d4ed8;
 }
 
 .dark {
@@ -46,6 +82,42 @@
   --th-badge-text: #93c5fd;
   --th-badge-border: rgba(59, 130, 246, 0.2);
   --th-ring-offset: #0f172a;
+
+  /* Action / semantic colors — dark mode */
+  --th-btn-primary-text: #bfdbfe;
+  --th-btn-primary-bg: rgba(59, 130, 246, 0.1);
+  --th-btn-primary-border: rgba(59, 130, 246, 0.3);
+  --th-btn-primary-hover: rgba(59, 130, 246, 0.2);
+  --th-btn-success-text: #a7f3d0;
+  --th-btn-success-bg: rgba(16, 185, 129, 0.1);
+  --th-btn-success-border: rgba(16, 185, 129, 0.3);
+  --th-btn-success-hover: rgba(16, 185, 129, 0.2);
+  --th-btn-danger-text: #fecaca;
+  --th-btn-danger-bg: rgba(239, 68, 68, 0.1);
+  --th-btn-danger-border: rgba(239, 68, 68, 0.3);
+  --th-btn-danger-hover: rgba(239, 68, 68, 0.2);
+  --th-btn-warning-text: #fde68a;
+  --th-btn-warning-bg: rgba(245, 158, 11, 0.1);
+  --th-btn-warning-border: rgba(245, 158, 11, 0.3);
+  --th-btn-warning-hover: rgba(245, 158, 11, 0.2);
+  --th-loading-text: #93c5fd;
+  --th-link: #60a5fa;
+  --th-link-hover: #93c5fd;
+  --th-card-bg: rgba(2, 6, 23, 0.5);
+  --th-section-bg: rgba(59, 130, 246, 0.05);
+  --th-section-border: rgba(59, 130, 246, 0.2);
+  --th-section-header: #ffffff;
+  --th-section-desc: rgba(191, 219, 254, 0.8);
+  --th-section-label: rgba(147, 197, 253, 0.7);
+  --th-msg-info-bg: rgba(59, 130, 246, 0.05);
+  --th-msg-info-border: rgba(59, 130, 246, 0.2);
+  --th-msg-info-text: #bfdbfe;
+  --th-msg-error-bg: rgba(239, 68, 68, 0.1);
+  --th-msg-error-border: rgba(239, 68, 68, 0.3);
+  --th-msg-error-text: #fecaca;
+  --th-step-num-bg: rgba(59, 130, 246, 0.2);
+  --th-step-num-border: rgba(59, 130, 246, 0.3);
+  --th-step-num-text: #93c5fd;
 }
 
 /* ─── Global Transitions ─── */

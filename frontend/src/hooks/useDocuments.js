@@ -5,6 +5,8 @@ export function useDocuments(params) {
   return useQuery({
     queryKey: ['documents', params],
     queryFn: () => documentsApi.getDocuments(params).then((r) => r.data),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   })
 }
 
@@ -20,6 +22,9 @@ export function useDocument(id) {
     queryKey: ['document', id],
     queryFn: () => documentsApi.getDocument(id).then((r) => r.data),
     enabled: !!id,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   })
 }
 
@@ -36,5 +41,8 @@ export function useDocumentVersions(documentId) {
     queryKey: ['document', documentId, 'versions'],
     queryFn: () => documentsApi.getVersions(documentId).then((r) => r.data),
     enabled: !!documentId,
+    staleTime: 0,
+    refetchOnMount: 'always',
   })
 }
+

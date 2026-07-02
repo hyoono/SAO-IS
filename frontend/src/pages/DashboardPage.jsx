@@ -22,7 +22,7 @@ export default function DashboardPage() {
         <p className="text-sm text-[var(--th-text-secondary)] mt-1 capitalize">{role} Dashboard</p>
       </div>
 
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading dashboard…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading dashboard…</p>}
 
       {!isLoading && modules.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -42,10 +42,10 @@ export default function DashboardPage() {
         <div className="flex flex-wrap gap-3">
           <Link to="/documents" className="px-4 py-2 text-xs font-medium text-[var(--th-text)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] border border-[var(--th-border)] rounded-lg">View Documents</Link>
           {['student', 'org_officer', 'faculty', 'admin', 'staff'].includes(role) && (
-            <Link to="/submit" className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-lg">Submit Document</Link>
+            <Link to="/submit" className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] hover:bg-[var(--th-btn-primary-hover)] border border-[var(--th-btn-primary-border)] rounded-lg">Submit Document</Link>
           )}
           {['admin', 'staff', 'faculty'].includes(role) && (
-            <Link to="/approvals" className="px-4 py-2 text-xs font-medium text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg">Review Queue</Link>
+            <Link to="/approvals" className="px-4 py-2 text-xs font-medium text-[var(--th-btn-success-text)] bg-[var(--th-btn-success-bg)] hover:bg-[var(--th-btn-success-hover)] border border-[var(--th-btn-success-border)] rounded-lg">Review Queue</Link>
           )}
           <Link to="/notifications" className="px-4 py-2 text-xs font-medium text-[var(--th-text)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] border border-[var(--th-border)] rounded-lg">Notifications</Link>
         </div>

@@ -36,7 +36,7 @@ export default function NotificationsPage() {
         <p className="text-sm text-[var(--th-text-secondary)] mt-1">{items.length} notification{items.length !== 1 ? 's' : ''}</p>
       </div>
 
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!isLoading && items.length === 0 && (
         <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No notifications.</p></div>
@@ -50,7 +50,7 @@ export default function NotificationsPage() {
               <div>
                 <p className="text-sm text-[var(--th-text)]">{n.message}</p>
                 <p className="text-[10px] text-[var(--th-text-muted)] mt-1">{formatDateTime(n.created_at)}</p>
-                {n.document_id && <Link to={`/documents/${n.document_id}`} className="text-[10px] text-blue-400 hover:text-blue-300 mt-1 block">View document →</Link>}
+                {n.document_id && <Link to={`/documents/${n.document_id}`} className="text-[10px] text-[var(--th-link)] hover:text-[var(--th-link-hover)] mt-1 block">View document →</Link>}
               </div>
             </div>
           ))}

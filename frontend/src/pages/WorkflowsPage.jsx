@@ -17,12 +17,12 @@ export default function WorkflowsPage() {
           <h2 className="text-2xl font-semibold text-[var(--th-text)]">Workflow Templates</h2>
           <p className="text-sm text-[var(--th-text-secondary)] mt-1">Manage approval workflows.</p>
         </div>
-        <Link to="/workflows/new" className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg">
+        <Link to="/workflows/new" className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg">
           + New Workflow
         </Link>
       </div>
 
-      {workflowsQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {workflowsQuery.isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!workflowsQuery.isLoading && items.length === 0 && (
         <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No workflows configured.</p></div>

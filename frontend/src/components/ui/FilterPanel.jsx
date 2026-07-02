@@ -24,7 +24,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
   }
 
   return (
-    <div className="rounded-xl border border-[var(--th-border)] bg-slate-950/40 overflow-hidden">
+    <div className="rounded-xl border border-[var(--th-border)] bg-[var(--th-surface-alt)] overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--th-text-secondary)] hover:text-[var(--th-text)] transition-colors cursor-pointer"
@@ -41,7 +41,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 space-y-4 border-t border-white/5 pt-4">
+        <div className="px-4 pb-4 space-y-4 border-t border-[var(--th-border-subtle)] pt-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Status filter */}
             <div>
@@ -49,7 +49,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-card-bg)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               >
                 <option value="">All statuses</option>
                 {Object.entries(STATUS_LABELS).map(([key, label]) => (
@@ -64,7 +64,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-card-bg)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               >
                 <option value="">All types</option>
                 {documentTypes.map((dt) => (
@@ -80,7 +80,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-card-bg)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="w-full rounded-lg border border-[var(--th-border)] bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-card-bg)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               />
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function FilterPanel({ documentTypes = [], onFilter }) {
           <div className="flex gap-2">
             <button
               onClick={handleApply}
-              className="px-4 py-1.5 text-xs font-medium text-white bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors cursor-pointer"
+              className="px-4 py-1.5 text-xs font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg transition-colors cursor-pointer"
             >
               Apply filters
             </button>

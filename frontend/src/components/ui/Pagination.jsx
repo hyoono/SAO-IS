@@ -18,7 +18,7 @@ export default function Pagination({ currentPage, lastPage, onPageChange }) {
         className="px-3 py-1.5 text-xs font-medium text-[var(--th-text-secondary)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] disabled:opacity-30 rounded-lg cursor-pointer">Prev</button>
       {pages.map((p) => (
         <button key={p} onClick={() => onPageChange(p)}
-          className={`px-3 py-1.5 text-xs font-medium rounded-lg cursor-pointer ${p === currentPage ? 'bg-blue-600/80 text-white' : 'text-[var(--th-text-secondary)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)]'}`}>{p}</button>
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg cursor-pointer ${p === currentPage ? 'bg-blue-600/80 text-[var(--th-text)]' : 'text-[var(--th-text-secondary)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)]'}`}>{p}</button>
       ))}
       <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= lastPage}
         className="px-3 py-1.5 text-xs font-medium text-[var(--th-text-secondary)] bg-[var(--th-surface)] hover:bg-[var(--th-surface-hover)] disabled:opacity-30 rounded-lg cursor-pointer">Next</button>

@@ -47,6 +47,7 @@ export default function ApprovalDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['document', id] })
       queryClient.invalidateQueries({ queryKey: ['document', id, 'history'] })
       queryClient.invalidateQueries({ queryKey: ['approvals'] })
+      queryClient.invalidateQueries({ queryKey: ['documents'] })
     },
     onError: (err) => setActionMsg(err?.response?.data?.message || 'Action failed.'),
   })
@@ -55,7 +56,7 @@ export default function ApprovalDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {documentQuery.isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {documentQuery.isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {doc && (
         <>
@@ -110,13 +111,13 @@ export default function ApprovalDetailPage() {
                   </div>
                 </div>
                 <a href={`/api/v1/documents/${id}/versions/${latestVersion.id}/download`}
-                  className="px-4 py-2 text-xs font-medium text-blue-200 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 rounded-lg"
+                  className="px-4 py-2 text-xs font-medium text-[var(--th-btn-primary-text)] bg-[var(--th-btn-primary-bg)] border border-[var(--th-btn-primary-border)] hover:bg-[var(--th-btn-primary-hover)] rounded-lg"
                   target="_blank" rel="noopener noreferrer">
                   Download
                 </a>
               </div>
               {versions.length > 1 && (
-                <p className="text-[10px] text-[var(--th-text-muted)] mt-3">{versions.length} versions available · <Link to={`/documents/${id}`} className="text-blue-400 hover:text-blue-300">View all →</Link></p>
+                <p className="text-[10px] text-[var(--th-text-muted)] mt-3">{versions.length} versions available · <Link to={`/documents/${id}`} className="text-[var(--th-link)] hover:text-[var(--th-link-hover)]">View all →</Link></p>
               )}
             </div>
           )}
@@ -129,13 +130,13 @@ export default function ApprovalDetailPage() {
                 className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] placeholder:text-[var(--th-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
               <div className="flex gap-3">
                 <button onClick={() => actionMutation.mutate('approve')} disabled={actionMutation.isPending}
-                  className="px-4 py-2 text-xs font-medium text-emerald-200 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 rounded-lg cursor-pointer">Approve</button>
+                  className="px-4 py-2 text-xs font-medium text-[var(--th-btn-success-text)] bg-[var(--th-btn-success-bg)] border border-[var(--th-btn-success-border)] hover:bg-[var(--th-btn-success-hover)] rounded-lg cursor-pointer">Approve</button>
                 <button onClick={() => actionMutation.mutate('reject')} disabled={actionMutation.isPending}
-                  className="px-4 py-2 text-xs font-medium text-red-200 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 rounded-lg cursor-pointer">Reject</button>
+                  className="px-4 py-2 text-xs font-medium text-[var(--th-btn-danger-text)] bg-[var(--th-btn-danger-bg)] border border-[var(--th-btn-danger-border)] hover:bg-[var(--th-btn-danger-hover)] rounded-lg cursor-pointer">Reject</button>
                 <button onClick={() => actionMutation.mutate('request-info')} disabled={actionMutation.isPending}
-                  className="px-4 py-2 text-xs font-medium text-amber-200 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 rounded-lg cursor-pointer">Request Info</button>
+                  className="px-4 py-2 text-xs font-medium text-[var(--th-btn-warning-text)] bg-[var(--th-btn-warning-bg)] border border-[var(--th-btn-warning-border)] hover:bg-[var(--th-btn-warning-hover)] rounded-lg cursor-pointer">Request Info</button>
               </div>
-              {actionMsg && <p className="text-xs text-emerald-300">{actionMsg}</p>}
+              {actionMsg && <p className="text-xs text-[var(--th-btn-success-text)]">{actionMsg}</p>}
             </div>
           )}
 

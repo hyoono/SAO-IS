@@ -58,7 +58,7 @@ export default function CentersPage() {
         </button>
       </div>
 
-      {msg && <p className="text-xs text-emerald-300">{msg}</p>}
+      {msg && <p className="text-xs text-[var(--th-btn-success-text)]">{msg}</p>}
 
       {/* Create/Edit Form */}
       {showForm && (
@@ -96,7 +96,7 @@ export default function CentersPage() {
       )}
 
       {/* Centers Table */}
-      {isLoading && <p className="text-sm text-blue-200/80 py-8 text-center">Loading…</p>}
+      {isLoading && <p className="text-sm text-[var(--th-loading-text)] py-8 text-center">Loading…</p>}
 
       {!isLoading && centers.length === 0 && (
         <div className="py-16 text-center"><p className="text-[var(--th-text-secondary)]">No centers configured.</p></div>
@@ -118,19 +118,19 @@ export default function CentersPage() {
               {centers.map((c) => (
                 <tr key={c.id} className="hover:bg-[var(--th-surface-hover)] transition-colors">
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--th-badge-bg)] text-[var(--th-badge-text)] border border-[var(--th-badge-border)]">
                       {c.code}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-[var(--th-text)]">{c.name}</td>
                   <td className="px-4 py-3 text-[var(--th-text-secondary)] text-xs max-w-xs truncate">{c.description || '—'}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${c.is_active ? 'bg-emerald-500/10 text-emerald-300' : 'bg-red-500/10 text-red-300'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs ${c.is_active ? 'bg-emerald-500/10 text-[var(--th-btn-success-text)]' : 'bg-red-500/10 text-[var(--th-btn-danger-text)]'}`}>
                       {c.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => startEdit(c)} className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">Edit</button>
+                    <button onClick={() => startEdit(c)} className="text-xs text-[var(--th-link)] hover:text-[var(--th-link-hover)] cursor-pointer">Edit</button>
                   </td>
                 </tr>
               ))}
