@@ -108,6 +108,32 @@ echo ""
 # ═══════════════════════════════════════════
 step "Step 1/8: Installing system packages"
 
+# Install prerequisites for adding repositories
+apt-get update -qq
+apt-get install -y -qq software-properties-common apt-transport-https ca-certificates gnupg curl
+
+# ── PHP repository (Ondřej Surý PPA) ──
+# Required because Ubuntu's default repos often don't carry php8.2/8.3 packages.
+info "Adding PHP repository (ppa:ondrej/php)..."
+add-apt-repository -y ppa:ondrej/php >/dev/null 2>&1
+log "PHP PPA added"
+
+# ── Node.js 20 repository (NodeSource) ──
+# Add early so a single apt-get install covers both PHP and Node in one pass.
+if ! command -v node &>/dev/null || [[ "$(node -v)" != v20* ]]; then
+    info "Adding Node.js 20 repository (NodeSource)..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - >/dev/null 2>&1
+    log "NodeSource repository added"
+fi
+
+# ── Nginx stable repository ──
+info "Adding Nginx stable repository..."
+curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg 2>/dev/null
+echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu $(lsb_release -cs) nginx" \
+    > /etc/apt/sources.list.d/nginx.list
+log "Nginx repository added"
+
+# ── Refresh package index with all new repos ──
 apt-get update -qq
 apt-get upgrade -y -qq
 
@@ -124,12 +150,12 @@ apt-get install -y -qq \
     "php${PHP_VERSION}-bcmath" \
     "php${PHP_VERSION}-intl" \
     "php${PHP_VERSION}-readline" \
+    nodejs \
     unzip \
     git \
-    curl \
     avahi-daemon
 
-log "System packages installed"
+log "System packages installed (PHP ${PHP_VERSION}, Node.js $(node -v), Nginx)"
 
 # Install Composer
 if ! command -v composer &>/dev/null; then
