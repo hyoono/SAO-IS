@@ -4,8 +4,32 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../hooks/useAuth'
 import { useDocument, useDocumentVersions } from '../hooks/useDocuments'
 import StatusBadge from '../components/ui/StatusBadge.jsx'
+import LocalAiExtractor from '../components/ai/LocalAiExtractor'
+import BilingualAssistant from '../components/ai/BilingualAssistant'
 import * as documentsApi from '../api/documents'
+import * as aiApi from '../api/ai'
 import { formatDateTime, formatFileSize } from '../utils/formatters'
+
+const AI_SUPPORTED_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+]
+
+function isAiSupportedVersion(version) {
+  const mime = (version.mime_type || '').toLowerCase()
+  const filename = (version.original_filename || '').toLowerCase()
+  return AI_SUPPORTED_MIME_TYPES.includes(mime)
+    || filename.endsWith('.pdf')
+    || filename.endsWith('.docx')
+    || filename.endsWith('.xlsx')
+    || filename.endsWith('.png')
+    || filename.endsWith('.jpg')
+    || filename.endsWith('.jpeg')
+}
 
 export default function DocumentDetailPage() {
   const { id } = useParams()
@@ -13,6 +37,19 @@ export default function DocumentDetailPage() {
   const { role } = useAuth()
   const queryClient = useQueryClient()
   const [uploadMsg, setUploadMsg] = useState('')
+  const [extractorState, setExtractorState] = useState({ isOpen: false, versionId: null, filename: '' })
+  const [verifyMsg, setVerifyMsg] = useState(null)
+  
+  const verifyMutation = useMutation({
+    mutationFn: ({ versionId, typeName }) => aiApi.verifyDocument({ version_id: versionId, expected_type: typeName }),
+    onSuccess: (res) => {
+      setVerifyMsg({
+        success: res.data.is_valid,
+        text: `AI Check: ${res.data.is_valid ? 'Valid' : 'Invalid'} (${res.data.confidence}% confident). ${res.data.reasoning}`
+      })
+    },
+    onError: () => setVerifyMsg({ success: false, text: 'AI Verification failed.' })
+  })
 
   const documentQuery = useDocument(documentId)
   const versionsQuery = useDocumentVersions(documentId)
@@ -33,8 +70,9 @@ export default function DocumentDetailPage() {
 
   if (!documentId) return <Navigate to="/documents" replace />
 
-  const canArchive = ['admin', 'staff'].includes(role)
-  const canUpload = doc && (['admin', 'staff'].includes(role) || doc.submitted_by === doc.submitter?.id)
+  const canArchive = ['admin', 'staff', 'director', 'center_head'].includes(role)
+  const canUpload = doc && (['admin', 'staff', 'director', 'center_head'].includes(role) || doc.submitted_by === doc.submitter?.id)
+  const canUseDocumentAi = ['admin', 'staff', 'director', 'center_head'].includes(role)
 
   const handleUpload = (e) => {
     const file = e.target.files?.[0]
@@ -56,9 +94,14 @@ export default function DocumentDetailPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold text-[var(--th-text)]">{doc.title}</h2>
-              <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-3 mt-2 flex-wrap">
                 <StatusBadge status={doc.status} />
                 <span className="text-xs text-[var(--th-text-muted)]">{doc.document_type?.name || doc.documentType?.name}</span>
+                {verifyMsg && (
+                  <span className={`text-xs px-2 py-1 rounded ${verifyMsg.success ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
+                    {verifyMsg.text}
+                  </span>
+                )}
               </div>
             </div>
             <Link to="/documents" className="text-sm text-[var(--th-text-secondary)] hover:text-[var(--th-text)]">← Back</Link>
@@ -122,7 +165,20 @@ export default function DocumentDetailPage() {
                         <td className="px-4 py-2.5 text-[var(--th-text-secondary)] text-xs">{formatDateTime(v.created_at)}</td>
                         <td className="px-4 py-2.5 text-right">
                           <a href={`/api/v1/documents/${documentId}/versions/${v.id}/download`}
-                            className="text-emerald-400 hover:text-[var(--th-btn-success-text)] text-xs font-medium">Download</a>
+                            className="text-emerald-400 hover:text-[var(--th-btn-success-text)] text-xs font-medium mr-4">Download</a>
+                          {canUseDocumentAi && isAiSupportedVersion(v) && (
+                            <>
+                              <button onClick={() => setExtractorState({ isOpen: true, versionId: v.id, filename: v.original_filename })}
+                                className="text-blue-400 hover:text-blue-500 text-xs font-medium cursor-pointer mr-4">
+                                Extract Data
+                              </button>
+                              <button onClick={() => verifyMutation.mutate({ versionId: v.id, typeName: doc.document_type?.name || doc.documentType?.name })}
+                                disabled={verifyMutation.isPending}
+                                className="text-purple-400 hover:text-purple-500 text-xs font-medium cursor-pointer disabled:opacity-50">
+                                {verifyMutation.isPending ? 'Verifying...' : 'Verify Quality'}
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -130,6 +186,18 @@ export default function DocumentDetailPage() {
                 </table>
               </div>
             )}
+          </div>
+          {/* AI Extractor Modal */}
+          <LocalAiExtractor 
+            isOpen={extractorState.isOpen} 
+            versionId={extractorState.versionId} 
+            originalFilename={extractorState.filename} 
+            onClose={() => setExtractorState({ isOpen: false, versionId: null, filename: '' })} 
+          />
+
+          {/* Bilingual Assistant */}
+          <div className="mt-8">
+            <BilingualAssistant />
           </div>
         </>
       )}

@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->orderBy('name');
+        $query = User::query()->with('center:id,code')->orderBy('name');
 
         if ($role = $request->query('role')) {
             $query->where('role', $role);
@@ -36,7 +36,8 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty'])],
+            'role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty', 'director', 'center_head'])],
+            'center_id' => ['nullable', 'uuid', Rule::exists('centers', 'id')],
         ]);
 
         $user = User::create([
@@ -44,6 +45,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password_hash' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'center_id' => $validated['center_id'] ?? null,
         ]);
 
         return response()->json([
@@ -73,6 +75,7 @@ class UserController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
+            'center_id' => $user->center_id,
             'ms365_id' => $user->ms365_id,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
@@ -101,7 +104,8 @@ class UserController extends Controller
 
         // Only admin can change roles
         if ($isAdmin) {
-            $rules['role'] = ['sometimes', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty'])];
+            $rules['role'] = ['sometimes', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty', 'director', 'center_head'])];
+            $rules['center_id'] = ['nullable', 'uuid', Rule::exists('centers', 'id')];
         }
 
         $validated = $request->validate($rules);
@@ -116,6 +120,10 @@ class UserController extends Controller
 
         if ($isAdmin && isset($validated['role'])) {
             $user->role = $validated['role'];
+        }
+
+        if ($isAdmin && array_key_exists('center_id', $validated)) {
+            $user->center_id = $validated['center_id'];
         }
 
         $user->save();

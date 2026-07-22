@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\CenterController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DocumentTypeController;
@@ -21,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 | All routes are prefixed with /api/v1 (configured in bootstrap/app.php).
 | Auth: Laravel Sanctum SPA cookie-based authentication.
 |
-| NOTE: Do NOT add middleware('web') here — statefulApi() in bootstrap
-| already applies session/cookie/CSRF middleware for stateful requests.
-| Adding it again causes double session init → session invalidation.
+| NOTE: statefulApi() in bootstrap applies session/cookie/CSRF middleware
+| for requests whose Referer/Origin matches SANCTUM_STATEFUL_DOMAINS.
+| Do NOT add explicit session middleware here — it causes double init.
 |
 */
 
@@ -124,5 +125,34 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
         Route::get('/reports', [ReportController::class, 'index']);
         Route::post('/reports', [ReportController::class, 'store']);
         Route::get('/reports/{report}/download', [ReportController::class, 'download']);
+    });
+
+    // ── AI/LLM Integration ──
+    Route::prefix('ai')->group(function () {
+        Route::post('/chat', [AiController::class, 'chat']);
+        Route::post('/classify-document', [AiController::class, 'classifyDocument']);
+        Route::post('/parse-search', [AiController::class, 'parseSearch']);
+        Route::post('/translate', [AiController::class, 'translate']);
+
+        Route::middleware('role:admin,staff,director,center_head')->group(function () {
+            Route::post('/suggest-workflow', [AiController::class, 'suggestWorkflow']);
+            Route::post('/verify-document', [AiController::class, 'verifyDocument']);
+            Route::post('/draft', [AiController::class, 'draft']);
+            Route::post('/extract', [AiController::class, 'extract']);
+            Route::post('/analyze', [AiController::class, 'analyze']);
+        });
+
+        Route::middleware('role:admin,staff,faculty,director,center_head')->group(function () {
+            Route::post('/recommend-approval', [AiController::class, 'recommendApproval']);
+        });
+
+        Route::middleware('role:admin,director')->group(function () {
+            Route::get('/anomalies', [AiController::class, 'getAnomalies']);
+            Route::post('/generate-report', [AiController::class, 'generateReport']);
+        });
+
+        Route::middleware('role:admin,director,center_head')->group(function () {
+            Route::get('/analytics', [AiController::class, 'getAnalytics']);
+        });
     });
 });

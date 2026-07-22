@@ -6,7 +6,7 @@ export default function CentersPage() {
   const queryClient = useQueryClient()
   const [showForm, setShowForm] = useState(false)
   const [editId, setEditId] = useState(null)
-  const [form, setForm] = useState({ code: '', name: '', description: '' })
+  const [form, setForm] = useState({ code: '', name: '', description: '', is_active: true })
   const [msg, setMsg] = useState('')
 
   const { data, isLoading } = useQuery({
@@ -27,11 +27,11 @@ export default function CentersPage() {
     onError: (e) => setMsg(e?.response?.data?.message || 'Error updating center.'),
   })
 
-  const reset = () => { setShowForm(false); setEditId(null); setForm({ code: '', name: '', description: '' }) }
+  const reset = () => { setShowForm(false); setEditId(null); setForm({ code: '', name: '', description: '', is_active: true }) }
 
   const startEdit = (c) => {
     setEditId(c.id)
-    setForm({ code: c.code, name: c.name, description: c.description || '' })
+    setForm({ code: c.code, name: c.name, description: c.description || '', is_active: c.is_active })
     setShowForm(true)
     setMsg('')
   }
@@ -84,6 +84,24 @@ export default function CentersPage() {
               className="w-full rounded-lg border border-[var(--th-border)] bg-[var(--th-surface-alt)] px-3 py-2 text-sm text-[var(--th-text)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               placeholder="Optional description" />
           </div>
+          {editId && (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, is_active: !form.is_active })}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
+                  form.is_active ? 'bg-emerald-500' : 'bg-[var(--th-border)]'
+                }`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                  form.is_active ? 'translate-x-4.5' : 'translate-x-0.5'
+                }`} />
+              </button>
+              <span className="text-xs text-[var(--th-text-secondary)]">
+                {form.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+          )}
           <div className="flex gap-3">
             <button type="submit" className="px-4 py-2 text-xs font-medium text-[var(--th-text)] bg-blue-600/80 hover:bg-blue-600 rounded-lg cursor-pointer">
               {editId ? 'Save Changes' : 'Create Center'}

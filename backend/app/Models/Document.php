@@ -48,6 +48,11 @@ class Document extends Model
         return $this->hasMany(DocumentVersion::class)->orderBy('version_number', 'desc');
     }
 
+    public function latestVersion()
+    {
+        return $this->hasOne(DocumentVersion::class)->ofMany('version_number', 'max');
+    }
+
     public function workflowInstance()
     {
         return $this->hasOne(WorkflowInstance::class);

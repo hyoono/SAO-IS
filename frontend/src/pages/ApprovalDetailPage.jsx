@@ -5,12 +5,22 @@ import { useAuth } from '../hooks/useAuth'
 import { useDocument } from '../hooks/useDocuments'
 import * as approvalsApi from '../api/approvals'
 import * as documentsApi from '../api/documents'
+import * as aiApi from '../api/ai'
 import StatusBadge from '../components/ui/StatusBadge.jsx'
 import { formatDateTime, formatFileSize } from '../utils/formatters'
 
+function canReviewCurrentStep(user, doc) {
+  const step = doc?.current_step || doc?.currentStep
+  if (!user || !doc || !step || !['pending', 'in_review'].includes(doc.status)) return false
+  if (step.assignee_user_id === user.id) return true
+  if (step.assignee_role !== user.role) return false
+  if (!step.center_id) return true
+  return !!user.center_id && step.center_id === user.center_id
+}
+
 export default function ApprovalDetailPage() {
   const { id } = useParams()
-  const { role } = useAuth()
+  const { user } = useAuth()
   const queryClient = useQueryClient()
   const [remarks, setRemarks] = useState('')
   const [actionMsg, setActionMsg] = useState('')
@@ -52,7 +62,14 @@ export default function ApprovalDetailPage() {
     onError: (err) => setActionMsg(err?.response?.data?.message || 'Action failed.'),
   })
 
-  const canReview = doc && ['pending', 'in_review'].includes(doc.status) && ['admin', 'staff', 'faculty'].includes(role)
+  const canReview = canReviewCurrentStep(user, doc)
+
+  const recommendationQuery = useQuery({
+    queryKey: ['document', id, 'ai-recommendation', doc?.current_step?.name || doc?.currentStep?.name],
+    queryFn: () => aiApi.recommendApproval({ document_id: id, step_name: doc.current_step?.name || doc.currentStep?.name }).then(r => r.data),
+    enabled: !!id && !!doc && canReview,
+    staleTime: 5 * 60 * 1000,
+  })
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -106,7 +123,7 @@ export default function ApprovalDetailPage() {
                   <div>
                     <p className="text-sm text-[var(--th-text)]">{latestVersion.original_filename}</p>
                     <p className="text-xs text-[var(--th-text-muted)]">
-                      Version {latestVersion.version_number} · {formatFileSize(latestVersion.file_size)} · {formatDateTime(latestVersion.created_at)}
+                      Version {latestVersion.version_number} · {formatFileSize(latestVersion.file_size_bytes)} · {formatDateTime(latestVersion.created_at)}
                     </p>
                   </div>
                 </div>
@@ -137,6 +154,17 @@ export default function ApprovalDetailPage() {
                   className="px-4 py-2 text-xs font-medium text-[var(--th-btn-warning-text)] bg-[var(--th-btn-warning-bg)] border border-[var(--th-btn-warning-border)] hover:bg-[var(--th-btn-warning-hover)] rounded-lg cursor-pointer">Request Info</button>
               </div>
               {actionMsg && <p className="text-xs text-[var(--th-btn-success-text)]">{actionMsg}</p>}
+              
+              {/* AI Recommendation Box */}
+              {recommendationQuery.isLoading && <p className="text-xs text-blue-400 mt-2">✨ AI is reviewing the document...</p>}
+              {recommendationQuery.data && (
+                <div className={`mt-4 p-3 rounded-lg border ${recommendationQuery.data.recommendation === 'Approve' ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-red-500/20 bg-red-500/5'}`}>
+                  <p className="text-xs font-semibold text-[var(--th-text)] flex items-center gap-1">
+                    ✨ AI Suggestion: <span className={recommendationQuery.data.recommendation === 'Approve' ? 'text-emerald-500' : 'text-red-500'}>{recommendationQuery.data.recommendation}</span>
+                  </p>
+                  <p className="text-xs text-[var(--th-text-secondary)] mt-1">{recommendationQuery.data.reasoning}</p>
+                </div>
+              )}
             </div>
           )}
 

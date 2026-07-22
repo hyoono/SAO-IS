@@ -36,8 +36,9 @@ class WorkflowController extends Controller
             'description' => ['nullable', 'string'],
             'steps' => ['required', 'array', 'min:1'],
             'steps.*.name' => ['required', 'string', 'max:255'],
-            'steps.*.assignee_role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty'])],
+            'steps.*.assignee_role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty', 'director', 'center_head'])],
             'steps.*.assignee_user_id' => ['nullable', 'uuid', Rule::exists('users', 'id')],
+            'steps.*.center_id' => ['nullable', 'uuid', Rule::exists('centers', 'id')],
         ]);
 
         return DB::transaction(function () use ($validated, $request): JsonResponse {
@@ -54,6 +55,7 @@ class WorkflowController extends Controller
                     'name' => $stepData['name'],
                     'assignee_role' => $stepData['assignee_role'],
                     'assignee_user_id' => $stepData['assignee_user_id'] ?? null,
+                    'center_id' => $stepData['center_id'] ?? null,
                 ]);
             }
 
@@ -83,8 +85,9 @@ class WorkflowController extends Controller
             'description' => ['nullable', 'string'],
             'steps' => ['required', 'array', 'min:1'],
             'steps.*.name' => ['required', 'string', 'max:255'],
-            'steps.*.assignee_role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty'])],
+            'steps.*.assignee_role' => ['required', Rule::in(['admin', 'staff', 'org_officer', 'student', 'faculty', 'director', 'center_head'])],
             'steps.*.assignee_user_id' => ['nullable', 'uuid', Rule::exists('users', 'id')],
+            'steps.*.center_id' => ['nullable', 'uuid', Rule::exists('centers', 'id')],
         ]);
 
         return DB::transaction(function () use ($validated, $workflow): JsonResponse {
@@ -106,6 +109,7 @@ class WorkflowController extends Controller
                     'name' => $stepData['name'],
                     'assignee_role' => $stepData['assignee_role'],
                     'assignee_user_id' => $stepData['assignee_user_id'] ?? null,
+                    'center_id' => $stepData['center_id'] ?? null,
                 ]);
             }
 

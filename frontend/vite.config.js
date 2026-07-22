@@ -19,13 +19,14 @@ export default defineConfig({
       port: 5174,
     },
     proxy: {
+      // Do NOT use changeOrigin — Sanctum needs the original Referer/Origin
+      // headers (localhost:5173) to match SANCTUM_STATEFUL_DOMAINS and
+      // apply session middleware for SPA cookie-based auth.
       '/api': {
         target: 'http://localhost:8000',
-        changeOrigin: true,
       },
       '/sanctum': {
         target: 'http://localhost:8000',
-        changeOrigin: true,
       },
     },
   },

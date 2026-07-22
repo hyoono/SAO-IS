@@ -22,6 +22,15 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    'ollama' => [
+        'url' => env('OLLAMA_API_URL', 'http://127.0.0.1:11434'),
+        'text_model' => env('OLLAMA_TEXT_MODEL', 'gemma4:e4b'),
+        'vision_model' => env('OLLAMA_VISION_MODEL', 'gemma4:e4b'),
+        'timeout' => (int) env('OLLAMA_TIMEOUT_SECONDS', 120),
+        'connect_timeout' => (int) env('OLLAMA_CONNECT_TIMEOUT_SECONDS', 5),
+        'notification_timeout' => (int) env('OLLAMA_NOTIFICATION_TIMEOUT_SECONDS', 8),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

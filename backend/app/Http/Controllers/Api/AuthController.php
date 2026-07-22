@@ -52,11 +52,19 @@ class AuthController extends Controller
 
     private function serializeUser(User $user): array
     {
+        $user->loadMissing('center:id,code,name');
+
         return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
+            'center_id' => $user->center_id,
+            'center' => $user->center ? [
+                'id' => $user->center->id,
+                'code' => $user->center->code,
+                'name' => $user->center->name,
+            ] : null,
         ];
     }
 }

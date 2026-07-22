@@ -16,7 +16,7 @@ class DocumentTypeController extends Controller
     public function index(): JsonResponse
     {
         $documentTypes = DocumentType::query()
-            ->with('workflowTemplate:id,name')
+            ->with(['workflowTemplate:id,name', 'center:id,code,name'])
             ->orderBy('name')
             ->get();
 
@@ -33,10 +33,11 @@ class DocumentTypeController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'workflow_template_id' => ['required', 'uuid', Rule::exists('workflow_templates', 'id')],
             'expiry_days' => ['nullable', 'integer', 'min:1'],
+            'center_id' => ['nullable', 'uuid', Rule::exists('centers', 'id')],
         ]);
 
         $documentType = DocumentType::create($validated);
-        $documentType->load('workflowTemplate:id,name');
+        $documentType->load(['workflowTemplate:id,name', 'center:id,code,name']);
 
         return response()->json($documentType, 201);
     }
@@ -51,10 +52,11 @@ class DocumentTypeController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'workflow_template_id' => ['sometimes', 'uuid', Rule::exists('workflow_templates', 'id')],
             'expiry_days' => ['nullable', 'integer', 'min:1'],
+            'center_id' => ['nullable', 'uuid', Rule::exists('centers', 'id')],
         ]);
 
         $documentType->update($validated);
-        $documentType->load('workflowTemplate:id,name');
+        $documentType->load(['workflowTemplate:id,name', 'center:id,code,name']);
 
         return response()->json($documentType);
     }

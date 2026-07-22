@@ -24,6 +24,8 @@ class DashboardController extends Controller
 
         $modules = match ($user->role) {
             'admin' => $this->adminModules($unreadNotifications),
+            'director' => $this->adminModules($unreadNotifications),
+            'center_head' => $this->centerHeadModules($user, $unreadNotifications),
             'staff' => $this->staffModules($user, $unreadNotifications),
             'org_officer' => $this->submitterModules($user, 'Organization Compliance', $unreadNotifications),
             'student' => $this->submitterModules($user, 'Student Requests', $unreadNotifications),
@@ -75,6 +77,38 @@ class DashboardController extends Controller
                 'title' => 'Unread Notifications',
                 'value' => $unreadNotifications,
                 'detail' => 'Alerts requiring administrator review.',
+            ],
+        ];
+    }
+
+    private function centerHeadModules(User $user, int $unreadNotifications): array
+    {
+        $queue = Document::whereIn('status', ['pending', 'in_review'])
+            ->whereHas('currentStep', function ($query) use ($user): void {
+                $query->where('assignee_role', 'center_head')
+                    ->where('center_id', $user->center_id);
+            })
+            ->count();
+
+        $centerDocs = Document::whereHas('documentType', function ($q) use ($user) {
+            $q->where('center_id', $user->center_id);
+        })->count();
+
+        return [
+            [
+                'title' => 'Pending Approvals',
+                'value' => $queue,
+                'detail' => 'Documents waiting for center head approval.',
+            ],
+            [
+                'title' => 'Center Documents',
+                'value' => $centerDocs,
+                'detail' => 'Total documents managed by your center.',
+            ],
+            [
+                'title' => 'Unread Notifications',
+                'value' => $unreadNotifications,
+                'detail' => 'Alerts and workflow updates.',
             ],
         ];
     }

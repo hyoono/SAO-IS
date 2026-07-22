@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar.jsx'
 import Topbar from './Topbar.jsx'
+import AiChatbotWidget from '../ai/AiChatbotWidget.jsx'
 
 /**
  * Application shell — persistent sidebar + topbar layout.
@@ -32,6 +33,7 @@ export default function AppShell() {
           </main>
         </div>
       </div>
+      <AiChatbotWidget />
     </div>
   )
 }

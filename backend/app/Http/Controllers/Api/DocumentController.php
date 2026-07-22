@@ -37,7 +37,7 @@ class DocumentController extends Controller
             ->with([
                 'documentType:id,name',
                 'submitter:id,name,email',
-                'currentStep:id,name,assignee_role,assignee_user_id',
+                'currentStep:id,name,assignee_role,assignee_user_id,center_id',
             ])
             ->latest();
 
@@ -49,6 +49,12 @@ class DocumentController extends Controller
             $query->whereHas('currentStep', function ($stepQuery) use ($user): void {
                 $stepQuery->where('assignee_role', 'faculty')
                     ->orWhere('assignee_user_id', $user->id);
+            });
+        }
+
+        if ($user->role === 'center_head') {
+            $query->whereHas('documentType', function ($dtQuery) use ($user): void {
+                $dtQuery->where('center_id', $user->center_id);
             });
         }
 
@@ -125,7 +131,7 @@ class DocumentController extends Controller
             $document->load([
                 'documentType:id,name',
                 'submitter:id,name,email',
-                'currentStep:id,name,assignee_role,assignee_user_id',
+                'currentStep:id,name,assignee_role,assignee_user_id,center_id',
                 'versions',
             ]);
 
@@ -145,7 +151,7 @@ class DocumentController extends Controller
         $document->load([
             'documentType:id,name',
             'submitter:id,name,email',
-            'currentStep:id,name,assignee_role,assignee_user_id',
+                'currentStep:id,name,assignee_role,assignee_user_id,center_id',
             'versions',
         ]);
 
@@ -177,6 +183,12 @@ class DocumentController extends Controller
             $query->where('submitted_by', $user->id);
         }
 
+        if ($user->role === 'center_head') {
+            $query->whereHas('documentType', function ($dtQuery) use ($user): void {
+                $dtQuery->where('center_id', $user->center_id);
+            });
+        }
+
         return response()->json($query->limit(20)->get());
     }
 
@@ -206,8 +218,8 @@ class DocumentController extends Controller
             abort(403, 'You are not authorized to upload new versions for this document.');
         }
 
-        if (!in_array($user->role, ['admin', 'staff'], true) && $document->submitted_by !== $user->id) {
-            abort(403, 'Only the owner or admin/staff can upload a new version.');
+        if (!in_array($user->role, ['admin', 'staff', 'director', 'center_head'], true) && $document->submitted_by !== $user->id) {
+            abort(403, 'Only the owner or admin/staff/director/center head can upload a new version.');
         }
 
         $validated = $request->validate([
@@ -286,8 +298,12 @@ class DocumentController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        if (!in_array($user->role, ['admin', 'staff'], true)) {
-            abort(403, 'Only admin/staff can archive documents.');
+        if (!in_array($user->role, ['admin', 'staff', 'director', 'center_head'], true)) {
+            abort(403, 'Only admin/staff/director can archive documents.');
+        }
+
+        if ($this->isForbidden($user, $document)) {
+            abort(403, 'You are not authorized to archive this document.');
         }
 
         $document->status = 'archived';
@@ -315,8 +331,12 @@ class DocumentController extends Controller
 
     private function isForbidden(User $user, Document $document): bool
     {
-        if (in_array($user->role, ['admin', 'staff'], true)) {
+        if (in_array($user->role, ['admin', 'staff', 'director'], true)) {
             return false;
+        }
+
+        if ($user->role === 'center_head') {
+            return $document->documentType->center_id !== $user->center_id;
         }
 
         if ($document->submitted_by === $user->id) {

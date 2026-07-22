@@ -7,6 +7,7 @@ use App\Models\Approval;
 use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\User;
+use App\Services\ApprovalAuthorizationService;
 use App\Services\NotificationService;
 use App\Services\WorkflowService;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +18,7 @@ class ApprovalController extends Controller
     public function __construct(
         private readonly WorkflowService $workflowService,
         private readonly NotificationService $notificationService,
+        private readonly ApprovalAuthorizationService $approvalAuthorization,
     ) {}
 
     /**
@@ -37,15 +39,14 @@ class ApprovalController extends Controller
 
                     // Role-based matching
                     $q->orWhere(function ($roleQuery) use ($user) {
-                        $roleQuery->where('assignee_role', $user->role);
+                        $roleQuery->where('assignee_role', $user->role)
+                            ->where(function ($centerQ) use ($user) {
+                                $centerQ->whereNull('center_id');
 
-                        // Center-scoped: match step's center with user's center
-                        if ($user->center_id) {
-                            $roleQuery->where(function ($centerQ) use ($user) {
-                                $centerQ->where('center_id', $user->center_id)
-                                         ->orWhereNull('center_id');
+                                if ($user->center_id) {
+                                    $centerQ->orWhere('center_id', $user->center_id);
+                                }
                             });
-                        }
                     });
 
                     // Director sees all steps assigned to 'director' role
@@ -91,6 +92,10 @@ class ApprovalController extends Controller
         $instance = $document->workflowInstance;
         if (!$instance || !$document->current_step_id) {
             return response()->json(['message' => 'No active workflow instance found.'], 422);
+        }
+
+        if (!$this->approvalAuthorization->canReview($user, $document)) {
+            abort(403, 'You are not authorized to review this document.');
         }
 
         // Record the approval
@@ -168,6 +173,10 @@ class ApprovalController extends Controller
             return response()->json(['message' => 'Document is not in a reviewable state.'], 422);
         }
 
+        if (!$this->approvalAuthorization->canReview($user, $document)) {
+            abort(403, 'You are not authorized to review this document.');
+        }
+
         $instance = $document->workflowInstance;
         if ($instance && $document->current_step_id) {
             Approval::create([
@@ -215,6 +224,10 @@ class ApprovalController extends Controller
 
         if (!in_array($document->status, ['pending', 'in_review'], true)) {
             return response()->json(['message' => 'Document is not in a reviewable state.'], 422);
+        }
+
+        if (!$this->approvalAuthorization->canReview($user, $document)) {
+            abort(403, 'You are not authorized to review this document.');
         }
 
         $instance = $document->workflowInstance;

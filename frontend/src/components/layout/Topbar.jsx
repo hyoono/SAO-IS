@@ -3,6 +3,8 @@ import { useAuth } from '../../hooks/useAuth'
 import { useTheme } from '../../context/ThemeContext'
 import { useQuery } from '@tanstack/react-query'
 import * as notificationsApi from '../../api/notifications'
+import LocalAiDrafter from '../ai/LocalAiDrafter'
+import { useState } from 'react'
 
 const PAGE_TITLES = {
   '/dashboard': 'Dashboard',
@@ -25,6 +27,7 @@ export default function Topbar({ onMenuToggle }) {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const location = useLocation()
+  const [isAiDrafterOpen, setIsAiDrafterOpen] = useState(false)
 
   const { data: notificationsData } = useQuery({
     queryKey: ['notifications'],
@@ -51,6 +54,8 @@ export default function Topbar({ onMenuToggle }) {
         <h1 className="text-lg font-semibold" style={{ color: 'var(--th-text)' }}>{title}</h1>
       </div>
 
+      <LocalAiDrafter isOpen={isAiDrafterOpen} onClose={() => setIsAiDrafterOpen(false)} />
+
       <div className="flex items-center gap-2 sm:gap-4">
         {/* Theme toggle */}
         <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -66,6 +71,16 @@ export default function Topbar({ onMenuToggle }) {
             </svg>
           )}
         </button>
+
+        {/* AI Drafter Button */}
+        {['admin', 'staff', 'director', 'center_head'].includes(user?.role) && (
+          <button onClick={() => setIsAiDrafterOpen(true)} title="AI Content Drafter"
+            className="p-2 rounded-lg transition-all cursor-pointer text-blue-500 hover:bg-blue-500/10">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+          </button>
+        )}
 
         {/* Notification bell */}
         <Link to="/notifications" className="relative p-2 rounded-lg transition-all"

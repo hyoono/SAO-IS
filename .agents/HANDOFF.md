@@ -121,7 +121,7 @@ Full plan at: [implementation_plan.md](file:///home/joshu/.gemini/antigravity/br
 
 ---
 
-## Phase 8: AI/LLM Integration (Plan Needed)
+## Phase 8: AI/LLM Integration (Implemented)
 
 ### Competition: 2026 iPeople Chairman's Prize for AI
 - **Theme:** "Rethinking the Design of Universities in the Era of AI"
@@ -167,18 +167,15 @@ Full plan at: [implementation_plan.md](file:///home/joshu/.gemini/antigravity/br
 16. **Bilingual Accessibility Assistant:** AI-driven feature to summarize complex academic policies into plain English and Tagalog (since the school is in the Philippines).
 *(Note: We will skip building an org recommender for students, as the school already uses Anthology Engage for this).*
 
-### Technical Approach:
-- **Model:** Google Gemma 4 (user mentioned it specifically — lightweight, runs on Raspberry Pi, but the Ubuntu server should handle `gemma3-4b` or larger easily)
-- **Runtime:** Ollama (`ollama run gemma3:4b`) on the same Ubuntu server
-- **Integration:** Laravel backend → HTTP to Ollama API → structured prompts → JSON responses
-- **Frontend:** Chat widget component, AI suggestion badges, smart search bar
-
-### Architecture:
-```
-React Frontend → Laravel API → Ollama (Gemma 4) running locally
-                              ↕
-                         MySQL Database
-```
+### Technical Approach (Implemented):
+- **Model:** Local Ollama running locally (via `http://127.0.0.1:11434`), using `gemma4:e4b` as a single multimodal model for both text and vision tasks (no separate vision model needed).
+- **Integration:** Laravel backend `OllamaService` makes HTTP requests to Ollama API. Includes a `Smalot\PdfParser` fallback for PDF text extraction.
+- **Frontend Components:** 
+  - `LocalAiDrafter.jsx` (Global Topbar)
+  - `LocalAiExtractor.jsx` (Document Details Page)
+  - `BilingualAssistant.jsx` (Document Details Page)
+  - `LocalAiAnalyzer.jsx` (Reports Page)
+- **Routes:** API prefix `/api/v1/ai` handles `draft`, `extract`, `analyze`, and `translate`.
 
 No external API costs. Data stays on-premises. Perfect for school LAN deployment.
 
