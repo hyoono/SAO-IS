@@ -381,6 +381,16 @@ step "Step 7/8: Configuring Nginx"
 
 PHP_SOCK="/var/run/php/php${PHP_VERSION}-fpm.sock"
 
+# Ensure Nginx site directories exist (some installs only have conf.d/)
+if [[ ! -d /etc/nginx/sites-available ]] || [[ ! -d /etc/nginx/sites-enabled ]]; then
+    info "Creating Nginx sites-available/sites-enabled directories..."
+    mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
+    # Add include directive if not already present
+    if ! grep -q "sites-enabled" /etc/nginx/nginx.conf; then
+        sed -i '/http {/a \    include /etc/nginx/sites-enabled/*;' /etc/nginx/nginx.conf
+    fi
+fi
+
 cat > /etc/nginx/sites-available/sao-is <<NGINX
 server {
     listen 80;
@@ -433,7 +443,7 @@ server {
 NGINX
 
 # Enable site
-ln -sf /etc/nginx/sites-available/sao-is /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/sao-is /etc/nginx/sites-enabled/sao-is
 rm -f /etc/nginx/sites-enabled/default
 
 # Test and restart
