@@ -209,9 +209,14 @@ if [[ "$SKIP_OLLAMA" = true ]]; then
     warn "AI features will show 'AI Service unavailable'"
 else
     if ! command -v ollama &>/dev/null; then
-        info "Installing Ollama..."
-        curl -fsSL https://ollama.com/install.sh | sh
-        log "Ollama installed"
+        info "Installing Ollama (CPU-only — will not modify GPU drivers)..."
+        # IMPORTANT: We do NOT let the Ollama installer auto-install NVIDIA/CUDA
+        # drivers, as this can break existing display drivers (e.g. GT 710 / nvidia-470).
+        # Setting OLLAMA_SKIP_GPU_CHECK=1 prevents driver installation.
+        # If GPU acceleration is desired, install CUDA drivers manually FIRST,
+        # then run: curl -fsSL https://ollama.com/install.sh | sh
+        curl -fsSL https://ollama.com/install.sh | OLLAMA_SKIP_GPU_CHECK=1 sh
+        log "Ollama installed (CPU mode — safe for existing display drivers)"
     else
         log "Ollama already installed"
     fi
